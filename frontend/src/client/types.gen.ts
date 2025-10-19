@@ -44,11 +44,26 @@ export type NewPassword = {
     new_password: string;
 };
 
+export type PermissionPublic = {
+    id: string;
+    name: string;
+    resource: string;
+    action: string;
+    description?: (string | null);
+};
+
 export type PrivateUserCreate = {
     email: string;
     password: string;
     full_name: string;
     is_verified?: boolean;
+};
+
+export type RolePublic = {
+    id: string;
+    name: string;
+    description?: (string | null);
+    permissions?: Array<PermissionPublic>;
 };
 
 export type Token = {
@@ -170,6 +185,102 @@ export type PrivateCreateUserData = {
 };
 
 export type PrivateCreateUserResponse = (UserPublic);
+
+export type RbacGetRolesWorkingResponse = (Array<RolePublic>);
+
+export type RbacCreateRoleData = {
+    description?: string;
+    name: string;
+};
+
+export type RbacCreateRoleResponse = (RolePublic);
+
+export type RbacGetPermissionsWorkingResponse = (Array<PermissionPublic>);
+
+export type RbacCreatePermissionData = {
+    action: string;
+    description?: string;
+    name: string;
+    resource: string;
+};
+
+export type RbacCreatePermissionResponse = (PermissionPublic);
+
+export type RbacUpdatePermissionData = {
+    action?: string;
+    description?: string;
+    name?: string;
+    permissionId: string;
+    resource?: string;
+};
+
+export type RbacUpdatePermissionResponse = (PermissionPublic);
+
+export type RbacDeletePermissionData = {
+    permissionId: string;
+};
+
+export type RbacDeletePermissionResponse = (unknown);
+
+export type RbacUpdateRoleData = {
+    description?: string;
+    name?: string;
+    roleId: string;
+};
+
+export type RbacUpdateRoleResponse = (RolePublic);
+
+export type RbacDeleteRoleData = {
+    roleId: string;
+};
+
+export type RbacDeleteRoleResponse = (unknown);
+
+export type RbacAssignPermissionToRoleData = {
+    permissionId: string;
+    roleId: string;
+};
+
+export type RbacAssignPermissionToRoleResponse = (unknown);
+
+export type RbacRemovePermissionFromRoleData = {
+    permissionId: string;
+    roleId: string;
+};
+
+export type RbacRemovePermissionFromRoleResponse = (unknown);
+
+export type RbacGetRolePermissionsData = {
+    roleId: string;
+};
+
+export type RbacGetRolePermissionsResponse = (Array<PermissionPublic>);
+
+export type RbacAssignRoleToUserData = {
+    roleId: string;
+    userId: string;
+};
+
+export type RbacAssignRoleToUserResponse = (unknown);
+
+export type RbacRemoveRoleFromUserData = {
+    roleId: string;
+    userId: string;
+};
+
+export type RbacRemoveRoleFromUserResponse = (unknown);
+
+export type RbacGetUserRolesData = {
+    userId: string;
+};
+
+export type RbacGetUserRolesResponse = (Array<RolePublic>);
+
+export type RbacGetUserPermissionsData = {
+    userId: string;
+};
+
+export type RbacGetUserPermissionsResponse = (Array<PermissionPublic>);
 
 export type UsersReadUsersData = {
     limit?: number;

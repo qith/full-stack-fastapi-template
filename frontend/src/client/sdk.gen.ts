@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse } from './types.gen';
+import type { ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, RbacGetRolesWorkingResponse, RbacCreateRoleData, RbacCreateRoleResponse, RbacGetPermissionsWorkingResponse, RbacCreatePermissionData, RbacCreatePermissionResponse, RbacUpdatePermissionData, RbacUpdatePermissionResponse, RbacDeletePermissionData, RbacDeletePermissionResponse, RbacUpdateRoleData, RbacUpdateRoleResponse, RbacDeleteRoleData, RbacDeleteRoleResponse, RbacAssignPermissionToRoleData, RbacAssignPermissionToRoleResponse, RbacRemovePermissionFromRoleData, RbacRemovePermissionFromRoleResponse, RbacGetRolePermissionsData, RbacGetRolePermissionsResponse, RbacAssignRoleToUserData, RbacAssignRoleToUserResponse, RbacRemoveRoleFromUserData, RbacRemoveRoleFromUserResponse, RbacGetUserRolesData, RbacGetUserRolesResponse, RbacGetUserPermissionsData, RbacGetUserPermissionsResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse } from './types.gen';
 
 export class ItemsService {
     /**
@@ -228,6 +228,339 @@ export class PrivateService {
             url: '/api/v1/private/users/',
             body: data.requestBody,
             mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+}
+
+export class RbacService {
+    /**
+     * Get Roles Working
+     * 获取所有角色 - 直接查询版本
+     * @returns RolePublic Successful Response
+     * @throws ApiError
+     */
+    public static getRolesWorking(): CancelablePromise<RbacGetRolesWorkingResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/rbac/roles'
+        });
+    }
+    
+    /**
+     * Create Role
+     * 创建角色
+     * @param data The data for the request.
+     * @param data.name
+     * @param data.description
+     * @returns RolePublic Successful Response
+     * @throws ApiError
+     */
+    public static createRole(data: RbacCreateRoleData): CancelablePromise<RbacCreateRoleResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/rbac/roles',
+            query: {
+                name: data.name,
+                description: data.description
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Permissions Working
+     * 获取所有权限
+     * @returns PermissionPublic Successful Response
+     * @throws ApiError
+     */
+    public static getPermissionsWorking(): CancelablePromise<RbacGetPermissionsWorkingResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/rbac/permissions'
+        });
+    }
+    
+    /**
+     * Create Permission
+     * 创建权限
+     * @param data The data for the request.
+     * @param data.name
+     * @param data.resource
+     * @param data.action
+     * @param data.description
+     * @returns PermissionPublic Successful Response
+     * @throws ApiError
+     */
+    public static createPermission(data: RbacCreatePermissionData): CancelablePromise<RbacCreatePermissionResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/rbac/permissions',
+            query: {
+                name: data.name,
+                resource: data.resource,
+                action: data.action,
+                description: data.description
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Permission
+     * 更新权限
+     * @param data The data for the request.
+     * @param data.permissionId
+     * @param data.name
+     * @param data.resource
+     * @param data.action
+     * @param data.description
+     * @returns PermissionPublic Successful Response
+     * @throws ApiError
+     */
+    public static updatePermission(data: RbacUpdatePermissionData): CancelablePromise<RbacUpdatePermissionResponse> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/v1/rbac/permissions/{permission_id}',
+            path: {
+                permission_id: data.permissionId
+            },
+            query: {
+                name: data.name,
+                resource: data.resource,
+                action: data.action,
+                description: data.description
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Permission
+     * 删除权限
+     * @param data The data for the request.
+     * @param data.permissionId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deletePermission(data: RbacDeletePermissionData): CancelablePromise<RbacDeletePermissionResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/rbac/permissions/{permission_id}',
+            path: {
+                permission_id: data.permissionId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Role
+     * 更新角色
+     * @param data The data for the request.
+     * @param data.roleId
+     * @param data.name
+     * @param data.description
+     * @returns RolePublic Successful Response
+     * @throws ApiError
+     */
+    public static updateRole(data: RbacUpdateRoleData): CancelablePromise<RbacUpdateRoleResponse> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/v1/rbac/roles/{role_id}',
+            path: {
+                role_id: data.roleId
+            },
+            query: {
+                name: data.name,
+                description: data.description
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Role
+     * 删除角色
+     * @param data The data for the request.
+     * @param data.roleId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deleteRole(data: RbacDeleteRoleData): CancelablePromise<RbacDeleteRoleResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/rbac/roles/{role_id}',
+            path: {
+                role_id: data.roleId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Assign Permission To Role
+     * 为角色分配权限
+     * @param data The data for the request.
+     * @param data.roleId
+     * @param data.permissionId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static assignPermissionToRole(data: RbacAssignPermissionToRoleData): CancelablePromise<RbacAssignPermissionToRoleResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/rbac/roles/{role_id}/permissions/{permission_id}',
+            path: {
+                role_id: data.roleId,
+                permission_id: data.permissionId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Remove Permission From Role
+     * 从角色移除权限
+     * @param data The data for the request.
+     * @param data.roleId
+     * @param data.permissionId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static removePermissionFromRole(data: RbacRemovePermissionFromRoleData): CancelablePromise<RbacRemovePermissionFromRoleResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/rbac/roles/{role_id}/permissions/{permission_id}',
+            path: {
+                role_id: data.roleId,
+                permission_id: data.permissionId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Role Permissions
+     * 获取角色的权限
+     * @param data The data for the request.
+     * @param data.roleId
+     * @returns PermissionPublic Successful Response
+     * @throws ApiError
+     */
+    public static getRolePermissions(data: RbacGetRolePermissionsData): CancelablePromise<RbacGetRolePermissionsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/rbac/roles/{role_id}/permissions',
+            path: {
+                role_id: data.roleId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Assign Role To User
+     * 为用户分配角色
+     * @param data The data for the request.
+     * @param data.userId
+     * @param data.roleId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static assignRoleToUser(data: RbacAssignRoleToUserData): CancelablePromise<RbacAssignRoleToUserResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/rbac/users/{user_id}/roles/{role_id}',
+            path: {
+                user_id: data.userId,
+                role_id: data.roleId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Remove Role From User
+     * 从用户移除角色
+     * @param data The data for the request.
+     * @param data.userId
+     * @param data.roleId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static removeRoleFromUser(data: RbacRemoveRoleFromUserData): CancelablePromise<RbacRemoveRoleFromUserResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/rbac/users/{user_id}/roles/{role_id}',
+            path: {
+                user_id: data.userId,
+                role_id: data.roleId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get User Roles
+     * 获取用户的角色
+     * @param data The data for the request.
+     * @param data.userId
+     * @returns RolePublic Successful Response
+     * @throws ApiError
+     */
+    public static getUserRoles(data: RbacGetUserRolesData): CancelablePromise<RbacGetUserRolesResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/rbac/users/{user_id}/roles',
+            path: {
+                user_id: data.userId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get User Permissions
+     * 获取用户的权限
+     * @param data The data for the request.
+     * @param data.userId
+     * @returns PermissionPublic Successful Response
+     * @throws ApiError
+     */
+    public static getUserPermissions(data: RbacGetUserPermissionsData): CancelablePromise<RbacGetUserPermissionsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/rbac/users/{user_id}/permissions',
+            path: {
+                user_id: data.userId
+            },
             errors: {
                 422: 'Validation Error'
             }

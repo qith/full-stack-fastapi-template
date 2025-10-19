@@ -9,16 +9,28 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TestRouteImport } from './routes/test'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RecoverPasswordRouteImport } from './routes/recover-password'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
+import { Route as LayoutSimpleMuiTestRouteImport } from './routes/_layout/simple-mui-test'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
+import { Route as LayoutRbacRouteImport } from './routes/_layout/rbac'
+import { Route as LayoutMuiRbacRouteImport } from './routes/_layout/mui-rbac'
+import { Route as LayoutMuiDemoRouteImport } from './routes/_layout/mui-demo'
+import { Route as LayoutMaterialTestRouteImport } from './routes/_layout/material-test'
 import { Route as LayoutItemsRouteImport } from './routes/_layout/items'
+import { Route as LayoutHybridDemoRouteImport } from './routes/_layout/hybrid-demo'
 import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
 
+const TestRoute = TestRouteImport.update({
+  id: '/test',
+  path: '/test',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -48,14 +60,44 @@ const LayoutIndexRoute = LayoutIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutSimpleMuiTestRoute = LayoutSimpleMuiTestRouteImport.update({
+  id: '/simple-mui-test',
+  path: '/simple-mui-test',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutRbacRoute = LayoutRbacRouteImport.update({
+  id: '/rbac',
+  path: '/rbac',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutMuiRbacRoute = LayoutMuiRbacRouteImport.update({
+  id: '/mui-rbac',
+  path: '/mui-rbac',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutMuiDemoRoute = LayoutMuiDemoRouteImport.update({
+  id: '/mui-demo',
+  path: '/mui-demo',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutMaterialTestRoute = LayoutMaterialTestRouteImport.update({
+  id: '/material-test',
+  path: '/material-test',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutItemsRoute = LayoutItemsRouteImport.update({
   id: '/items',
   path: '/items',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutHybridDemoRoute = LayoutHybridDemoRouteImport.update({
+  id: '/hybrid-demo',
+  path: '/hybrid-demo',
   getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutAdminRoute = LayoutAdminRouteImport.update({
@@ -69,9 +111,16 @@ export interface FileRoutesByFullPath {
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/test': typeof TestRoute
   '/admin': typeof LayoutAdminRoute
+  '/hybrid-demo': typeof LayoutHybridDemoRoute
   '/items': typeof LayoutItemsRoute
+  '/material-test': typeof LayoutMaterialTestRoute
+  '/mui-demo': typeof LayoutMuiDemoRoute
+  '/mui-rbac': typeof LayoutMuiRbacRoute
+  '/rbac': typeof LayoutRbacRoute
   '/settings': typeof LayoutSettingsRoute
+  '/simple-mui-test': typeof LayoutSimpleMuiTestRoute
   '/': typeof LayoutIndexRoute
 }
 export interface FileRoutesByTo {
@@ -79,9 +128,16 @@ export interface FileRoutesByTo {
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/test': typeof TestRoute
   '/admin': typeof LayoutAdminRoute
+  '/hybrid-demo': typeof LayoutHybridDemoRoute
   '/items': typeof LayoutItemsRoute
+  '/material-test': typeof LayoutMaterialTestRoute
+  '/mui-demo': typeof LayoutMuiDemoRoute
+  '/mui-rbac': typeof LayoutMuiRbacRoute
+  '/rbac': typeof LayoutRbacRoute
   '/settings': typeof LayoutSettingsRoute
+  '/simple-mui-test': typeof LayoutSimpleMuiTestRoute
   '/': typeof LayoutIndexRoute
 }
 export interface FileRoutesById {
@@ -91,9 +147,16 @@ export interface FileRoutesById {
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/test': typeof TestRoute
   '/_layout/admin': typeof LayoutAdminRoute
+  '/_layout/hybrid-demo': typeof LayoutHybridDemoRoute
   '/_layout/items': typeof LayoutItemsRoute
+  '/_layout/material-test': typeof LayoutMaterialTestRoute
+  '/_layout/mui-demo': typeof LayoutMuiDemoRoute
+  '/_layout/mui-rbac': typeof LayoutMuiRbacRoute
+  '/_layout/rbac': typeof LayoutRbacRoute
   '/_layout/settings': typeof LayoutSettingsRoute
+  '/_layout/simple-mui-test': typeof LayoutSimpleMuiTestRoute
   '/_layout/': typeof LayoutIndexRoute
 }
 export interface FileRouteTypes {
@@ -103,9 +166,16 @@ export interface FileRouteTypes {
     | '/recover-password'
     | '/reset-password'
     | '/signup'
+    | '/test'
     | '/admin'
+    | '/hybrid-demo'
     | '/items'
+    | '/material-test'
+    | '/mui-demo'
+    | '/mui-rbac'
+    | '/rbac'
     | '/settings'
+    | '/simple-mui-test'
     | '/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -113,9 +183,16 @@ export interface FileRouteTypes {
     | '/recover-password'
     | '/reset-password'
     | '/signup'
+    | '/test'
     | '/admin'
+    | '/hybrid-demo'
     | '/items'
+    | '/material-test'
+    | '/mui-demo'
+    | '/mui-rbac'
+    | '/rbac'
     | '/settings'
+    | '/simple-mui-test'
     | '/'
   id:
     | '__root__'
@@ -124,9 +201,16 @@ export interface FileRouteTypes {
     | '/recover-password'
     | '/reset-password'
     | '/signup'
+    | '/test'
     | '/_layout/admin'
+    | '/_layout/hybrid-demo'
     | '/_layout/items'
+    | '/_layout/material-test'
+    | '/_layout/mui-demo'
+    | '/_layout/mui-rbac'
+    | '/_layout/rbac'
     | '/_layout/settings'
+    | '/_layout/simple-mui-test'
     | '/_layout/'
   fileRoutesById: FileRoutesById
 }
@@ -136,10 +220,18 @@ export interface RootRouteChildren {
   RecoverPasswordRoute: typeof RecoverPasswordRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
+  TestRoute: typeof TestRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/test': {
+      id: '/test'
+      path: '/test'
+      fullPath: '/test'
+      preLoaderRoute: typeof TestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
@@ -182,6 +274,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutIndexRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/simple-mui-test': {
+      id: '/_layout/simple-mui-test'
+      path: '/simple-mui-test'
+      fullPath: '/simple-mui-test'
+      preLoaderRoute: typeof LayoutSimpleMuiTestRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/settings': {
       id: '/_layout/settings'
       path: '/settings'
@@ -189,11 +288,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutSettingsRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/rbac': {
+      id: '/_layout/rbac'
+      path: '/rbac'
+      fullPath: '/rbac'
+      preLoaderRoute: typeof LayoutRbacRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/mui-rbac': {
+      id: '/_layout/mui-rbac'
+      path: '/mui-rbac'
+      fullPath: '/mui-rbac'
+      preLoaderRoute: typeof LayoutMuiRbacRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/mui-demo': {
+      id: '/_layout/mui-demo'
+      path: '/mui-demo'
+      fullPath: '/mui-demo'
+      preLoaderRoute: typeof LayoutMuiDemoRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/material-test': {
+      id: '/_layout/material-test'
+      path: '/material-test'
+      fullPath: '/material-test'
+      preLoaderRoute: typeof LayoutMaterialTestRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/items': {
       id: '/_layout/items'
       path: '/items'
       fullPath: '/items'
       preLoaderRoute: typeof LayoutItemsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/hybrid-demo': {
+      id: '/_layout/hybrid-demo'
+      path: '/hybrid-demo'
+      fullPath: '/hybrid-demo'
+      preLoaderRoute: typeof LayoutHybridDemoRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/admin': {
@@ -208,15 +342,27 @@ declare module '@tanstack/react-router' {
 
 interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
+  LayoutHybridDemoRoute: typeof LayoutHybridDemoRoute
   LayoutItemsRoute: typeof LayoutItemsRoute
+  LayoutMaterialTestRoute: typeof LayoutMaterialTestRoute
+  LayoutMuiDemoRoute: typeof LayoutMuiDemoRoute
+  LayoutMuiRbacRoute: typeof LayoutMuiRbacRoute
+  LayoutRbacRoute: typeof LayoutRbacRoute
   LayoutSettingsRoute: typeof LayoutSettingsRoute
+  LayoutSimpleMuiTestRoute: typeof LayoutSimpleMuiTestRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
+  LayoutHybridDemoRoute: LayoutHybridDemoRoute,
   LayoutItemsRoute: LayoutItemsRoute,
+  LayoutMaterialTestRoute: LayoutMaterialTestRoute,
+  LayoutMuiDemoRoute: LayoutMuiDemoRoute,
+  LayoutMuiRbacRoute: LayoutMuiRbacRoute,
+  LayoutRbacRoute: LayoutRbacRoute,
   LayoutSettingsRoute: LayoutSettingsRoute,
+  LayoutSimpleMuiTestRoute: LayoutSimpleMuiTestRoute,
   LayoutIndexRoute: LayoutIndexRoute,
 }
 
@@ -229,6 +375,7 @@ const rootRouteChildren: RootRouteChildren = {
   RecoverPasswordRoute: RecoverPasswordRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
+  TestRoute: TestRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
