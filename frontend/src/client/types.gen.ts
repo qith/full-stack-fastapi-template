@@ -39,9 +39,40 @@ export type Message = {
     message: string;
 };
 
+export type Milestone = {
+    milestone_date: string;
+    description: string;
+    status?: MilestoneStatus;
+    id: string;
+    project_id: string;
+    created_at: string;
+    updated_at: string;
+};
+
+export type MilestoneCreate = {
+    milestone_date: string;
+    description: string;
+    status?: MilestoneStatus;
+};
+
+export type MilestoneStatus = '正常' | '延期' | '完成';
+
+export type MilestoneUpdate = {
+    milestone_date?: (string | null);
+    description?: (string | null);
+    status?: (MilestoneStatus | null);
+};
+
 export type NewPassword = {
     token: string;
     new_password: string;
+};
+
+export type PermissionCreate = {
+    name: string;
+    resource: string;
+    action: string;
+    description?: string;
 };
 
 export type PermissionPublic = {
@@ -52,6 +83,13 @@ export type PermissionPublic = {
     description?: (string | null);
 };
 
+export type PermissionUpdate = {
+    name?: string;
+    resource?: string;
+    action?: string;
+    description?: string;
+};
+
 export type PrivateUserCreate = {
     email: string;
     password: string;
@@ -59,11 +97,143 @@ export type PrivateUserCreate = {
     is_verified?: boolean;
 };
 
+export type Progress = {
+    description: string;
+    progress_type?: ProgressType;
+    tracking_user_id: string;
+    progress_date?: string;
+    id: string;
+    project_id: string;
+    created_at: string;
+    updated_at: string;
+};
+
+export type ProgressCreate = {
+    description: string;
+    progress_type?: ProgressType;
+    tracking_user_id: string;
+    progress_date?: string;
+};
+
+export type ProgressType = '日进展' | '周进展';
+
+export type ProgressUpdate = {
+    description?: (string | null);
+    progress_type?: (ProgressType | null);
+    tracking_user_id?: (string | null);
+    progress_date?: (string | null);
+};
+
+export type Project = {
+    name: string;
+    project_type: string;
+    location: string;
+    contract_amount?: (number | null);
+    background?: (string | null);
+    import_time?: (string | null);
+    id: string;
+    created_at: string;
+    updated_at: string;
+    products?: Array<ProjectProduct>;
+    role_assignments?: Array<RoleAssignment>;
+    milestones?: Array<Milestone>;
+    progresses?: Array<Progress>;
+};
+
+export type ProjectCountByLocation = {
+    location: string;
+    count: number;
+};
+
+export type ProjectCountByProduct = {
+    product: string;
+    count: number;
+};
+
+export type ProjectCountByType = {
+    project_type: string;
+    count: number;
+};
+
+export type ProjectCreate = {
+    name: string;
+    project_type: string;
+    location: string;
+    contract_amount?: (number | null);
+    background?: (string | null);
+    import_time?: (string | null);
+    products?: (Array<ProjectProductCreate> | null);
+    role_assignments?: (Array<RoleAssignmentCreate> | null);
+    milestones?: (Array<MilestoneCreate> | null);
+};
+
+export type ProjectProduct = {
+    product_name: string;
+    product_amount?: (number | null);
+    id: string;
+    project_id: string;
+    created_at: string;
+};
+
+export type ProjectProductCreate = {
+    product_name: string;
+    product_amount?: (number | null);
+};
+
+export type ProjectStatistics = {
+    by_location: Array<ProjectCountByLocation>;
+    by_product: Array<ProjectCountByProduct>;
+    by_type: Array<ProjectCountByType>;
+    total_projects: number;
+    total_contract_amount: number;
+};
+
+export type ProjectUpdate = {
+    name?: (string | null);
+    project_type?: (string | null);
+    location?: (string | null);
+    contract_amount?: (number | null);
+    background?: (string | null);
+    import_time?: (string | null);
+    products?: (Array<ProjectProductCreate> | null);
+    role_assignments?: (Array<RoleAssignmentCreate> | null);
+    milestones?: (Array<MilestoneCreate> | null);
+};
+
+export type RoleAssignment = {
+    role_name: string;
+    user_name: string;
+    user_email?: (string | null);
+    user_phone?: (string | null);
+    user_description?: (string | null);
+    id: string;
+    project_id: string;
+    created_at: string;
+};
+
+export type RoleAssignmentCreate = {
+    role_name: string;
+    user_name: string;
+    user_email?: (string | null);
+    user_phone?: (string | null);
+    user_description?: (string | null);
+};
+
+export type RoleCreate = {
+    name: string;
+    description?: string;
+};
+
 export type RolePublic = {
     id: string;
     name: string;
     description?: (string | null);
     permissions?: Array<PermissionPublic>;
+};
+
+export type RoleUpdate = {
+    name?: string;
+    description?: string;
 };
 
 export type Token = {
@@ -186,11 +356,114 @@ export type PrivateCreateUserData = {
 
 export type PrivateCreateUserResponse = (UserPublic);
 
+export type ProjectsCreateProjectData = {
+    requestBody: ProjectCreate;
+};
+
+export type ProjectsCreateProjectResponse = (Project);
+
+export type ProjectsReadProjectsData = {
+    limit?: number;
+    skip?: number;
+};
+
+export type ProjectsReadProjectsResponse = (Array<Project>);
+
+export type ProjectsGetProjectStatisticsResponse = (ProjectStatistics);
+
+export type ProjectsReadProjectData = {
+    projectId: string;
+};
+
+export type ProjectsReadProjectResponse = (Project);
+
+export type ProjectsUpdateProjectData = {
+    projectId: string;
+    requestBody: ProjectUpdate;
+};
+
+export type ProjectsUpdateProjectResponse = (Project);
+
+export type ProjectsDeleteProjectData = {
+    projectId: string;
+};
+
+export type ProjectsDeleteProjectResponse = (unknown);
+
+export type ProjectsCreateRoleAssignmentData = {
+    projectId: string;
+    requestBody: RoleAssignmentCreate;
+};
+
+export type ProjectsCreateRoleAssignmentResponse = (RoleAssignment);
+
+export type ProjectsDeleteRoleAssignmentData = {
+    projectId: string;
+    roleId: string;
+};
+
+export type ProjectsDeleteRoleAssignmentResponse = (unknown);
+
+export type ProjectsCreateMilestoneData = {
+    projectId: string;
+    requestBody: MilestoneCreate;
+};
+
+export type ProjectsCreateMilestoneResponse = (Milestone);
+
+export type ProjectsReadProjectMilestonesData = {
+    projectId: string;
+};
+
+export type ProjectsReadProjectMilestonesResponse = (Array<Milestone>);
+
+export type ProjectsUpdateMilestoneData = {
+    milestoneId: string;
+    projectId: string;
+    requestBody: MilestoneUpdate;
+};
+
+export type ProjectsUpdateMilestoneResponse = (Milestone);
+
+export type ProjectsDeleteMilestoneData = {
+    milestoneId: string;
+    projectId: string;
+};
+
+export type ProjectsDeleteMilestoneResponse = (unknown);
+
+export type ProjectsCreateProgressData = {
+    projectId: string;
+    requestBody: ProgressCreate;
+};
+
+export type ProjectsCreateProgressResponse = (Progress);
+
+export type ProjectsReadProjectProgressesData = {
+    projectId: string;
+};
+
+export type ProjectsReadProjectProgressesResponse = (unknown);
+
+export type ProjectsUpdateProgressData = {
+    progressId: string;
+    projectId: string;
+    requestBody: ProgressUpdate;
+};
+
+export type ProjectsUpdateProgressResponse = (Progress);
+
+export type ProjectsDeleteProgressData = {
+    progressId: string;
+    projectId: string;
+};
+
+export type ProjectsDeleteProgressResponse = (unknown);
+
 export type RbacGetRolesWorkingResponse = (Array<RolePublic>);
 
 export type RbacCreateRoleData = {
-    description?: string;
-    name: string;
+    requestBody: RoleCreate;
 };
 
 export type RbacCreateRoleResponse = (RolePublic);
@@ -198,20 +471,14 @@ export type RbacCreateRoleResponse = (RolePublic);
 export type RbacGetPermissionsWorkingResponse = (Array<PermissionPublic>);
 
 export type RbacCreatePermissionData = {
-    action: string;
-    description?: string;
-    name: string;
-    resource: string;
+    requestBody: PermissionCreate;
 };
 
 export type RbacCreatePermissionResponse = (PermissionPublic);
 
 export type RbacUpdatePermissionData = {
-    action?: string;
-    description?: string;
-    name?: string;
     permissionId: string;
-    resource?: string;
+    requestBody: PermissionUpdate;
 };
 
 export type RbacUpdatePermissionResponse = (PermissionPublic);
@@ -223,8 +490,7 @@ export type RbacDeletePermissionData = {
 export type RbacDeletePermissionResponse = (unknown);
 
 export type RbacUpdateRoleData = {
-    description?: string;
-    name?: string;
+    requestBody: RoleUpdate;
     roleId: string;
 };
 

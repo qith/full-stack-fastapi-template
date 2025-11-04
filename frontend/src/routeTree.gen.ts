@@ -19,6 +19,7 @@ import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as LayoutSimpleMuiTestRouteImport } from './routes/_layout/simple-mui-test'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
 import { Route as LayoutRbacRouteImport } from './routes/_layout/rbac'
+import { Route as LayoutProjectManagementRouteImport } from './routes/_layout/project-management'
 import { Route as LayoutMuiRbacRouteImport } from './routes/_layout/mui-rbac'
 import { Route as LayoutMuiDemoRouteImport } from './routes/_layout/mui-demo'
 import { Route as LayoutMaterialTestRouteImport } from './routes/_layout/material-test'
@@ -75,6 +76,11 @@ const LayoutRbacRoute = LayoutRbacRouteImport.update({
   path: '/rbac',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutProjectManagementRoute = LayoutProjectManagementRouteImport.update({
+  id: '/project-management',
+  path: '/project-management',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutMuiRbacRoute = LayoutMuiRbacRouteImport.update({
   id: '/mui-rbac',
   path: '/mui-rbac',
@@ -118,6 +124,7 @@ export interface FileRoutesByFullPath {
   '/material-test': typeof LayoutMaterialTestRoute
   '/mui-demo': typeof LayoutMuiDemoRoute
   '/mui-rbac': typeof LayoutMuiRbacRoute
+  '/project-management': typeof LayoutProjectManagementRoute
   '/rbac': typeof LayoutRbacRoute
   '/settings': typeof LayoutSettingsRoute
   '/simple-mui-test': typeof LayoutSimpleMuiTestRoute
@@ -135,6 +142,7 @@ export interface FileRoutesByTo {
   '/material-test': typeof LayoutMaterialTestRoute
   '/mui-demo': typeof LayoutMuiDemoRoute
   '/mui-rbac': typeof LayoutMuiRbacRoute
+  '/project-management': typeof LayoutProjectManagementRoute
   '/rbac': typeof LayoutRbacRoute
   '/settings': typeof LayoutSettingsRoute
   '/simple-mui-test': typeof LayoutSimpleMuiTestRoute
@@ -154,6 +162,7 @@ export interface FileRoutesById {
   '/_layout/material-test': typeof LayoutMaterialTestRoute
   '/_layout/mui-demo': typeof LayoutMuiDemoRoute
   '/_layout/mui-rbac': typeof LayoutMuiRbacRoute
+  '/_layout/project-management': typeof LayoutProjectManagementRoute
   '/_layout/rbac': typeof LayoutRbacRoute
   '/_layout/settings': typeof LayoutSettingsRoute
   '/_layout/simple-mui-test': typeof LayoutSimpleMuiTestRoute
@@ -173,6 +182,7 @@ export interface FileRouteTypes {
     | '/material-test'
     | '/mui-demo'
     | '/mui-rbac'
+    | '/project-management'
     | '/rbac'
     | '/settings'
     | '/simple-mui-test'
@@ -190,6 +200,7 @@ export interface FileRouteTypes {
     | '/material-test'
     | '/mui-demo'
     | '/mui-rbac'
+    | '/project-management'
     | '/rbac'
     | '/settings'
     | '/simple-mui-test'
@@ -208,6 +219,7 @@ export interface FileRouteTypes {
     | '/_layout/material-test'
     | '/_layout/mui-demo'
     | '/_layout/mui-rbac'
+    | '/_layout/project-management'
     | '/_layout/rbac'
     | '/_layout/settings'
     | '/_layout/simple-mui-test'
@@ -295,6 +307,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutRbacRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/project-management': {
+      id: '/_layout/project-management'
+      path: '/project-management'
+      fullPath: '/project-management'
+      preLoaderRoute: typeof LayoutProjectManagementRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/mui-rbac': {
       id: '/_layout/mui-rbac'
       path: '/mui-rbac'
@@ -347,6 +366,7 @@ interface LayoutRouteChildren {
   LayoutMaterialTestRoute: typeof LayoutMaterialTestRoute
   LayoutMuiDemoRoute: typeof LayoutMuiDemoRoute
   LayoutMuiRbacRoute: typeof LayoutMuiRbacRoute
+  LayoutProjectManagementRoute: typeof LayoutProjectManagementRoute
   LayoutRbacRoute: typeof LayoutRbacRoute
   LayoutSettingsRoute: typeof LayoutSettingsRoute
   LayoutSimpleMuiTestRoute: typeof LayoutSimpleMuiTestRoute
@@ -360,6 +380,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutMaterialTestRoute: LayoutMaterialTestRoute,
   LayoutMuiDemoRoute: LayoutMuiDemoRoute,
   LayoutMuiRbacRoute: LayoutMuiRbacRoute,
+  LayoutProjectManagementRoute: LayoutProjectManagementRoute,
   LayoutRbacRoute: LayoutRbacRoute,
   LayoutSettingsRoute: LayoutSettingsRoute,
   LayoutSimpleMuiTestRoute: LayoutSimpleMuiTestRoute,

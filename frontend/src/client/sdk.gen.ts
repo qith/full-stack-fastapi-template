@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, RbacGetRolesWorkingResponse, RbacCreateRoleData, RbacCreateRoleResponse, RbacGetPermissionsWorkingResponse, RbacCreatePermissionData, RbacCreatePermissionResponse, RbacUpdatePermissionData, RbacUpdatePermissionResponse, RbacDeletePermissionData, RbacDeletePermissionResponse, RbacUpdateRoleData, RbacUpdateRoleResponse, RbacDeleteRoleData, RbacDeleteRoleResponse, RbacAssignPermissionToRoleData, RbacAssignPermissionToRoleResponse, RbacRemovePermissionFromRoleData, RbacRemovePermissionFromRoleResponse, RbacGetRolePermissionsData, RbacGetRolePermissionsResponse, RbacAssignRoleToUserData, RbacAssignRoleToUserResponse, RbacRemoveRoleFromUserData, RbacRemoveRoleFromUserResponse, RbacGetUserRolesData, RbacGetUserRolesResponse, RbacGetUserPermissionsData, RbacGetUserPermissionsResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse } from './types.gen';
+import type { ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, ProjectsCreateProjectData, ProjectsCreateProjectResponse, ProjectsReadProjectsData, ProjectsReadProjectsResponse, ProjectsGetProjectStatisticsResponse, ProjectsReadProjectData, ProjectsReadProjectResponse, ProjectsUpdateProjectData, ProjectsUpdateProjectResponse, ProjectsDeleteProjectData, ProjectsDeleteProjectResponse, ProjectsCreateRoleAssignmentData, ProjectsCreateRoleAssignmentResponse, ProjectsDeleteRoleAssignmentData, ProjectsDeleteRoleAssignmentResponse, ProjectsCreateMilestoneData, ProjectsCreateMilestoneResponse, ProjectsReadProjectMilestonesData, ProjectsReadProjectMilestonesResponse, ProjectsUpdateMilestoneData, ProjectsUpdateMilestoneResponse, ProjectsDeleteMilestoneData, ProjectsDeleteMilestoneResponse, ProjectsCreateProgressData, ProjectsCreateProgressResponse, ProjectsReadProjectProgressesData, ProjectsReadProjectProgressesResponse, ProjectsUpdateProgressData, ProjectsUpdateProgressResponse, ProjectsDeleteProgressData, ProjectsDeleteProgressResponse, RbacGetRolesWorkingResponse, RbacCreateRoleData, RbacCreateRoleResponse, RbacGetPermissionsWorkingResponse, RbacCreatePermissionData, RbacCreatePermissionResponse, RbacUpdatePermissionData, RbacUpdatePermissionResponse, RbacDeletePermissionData, RbacDeletePermissionResponse, RbacUpdateRoleData, RbacUpdateRoleResponse, RbacDeleteRoleData, RbacDeleteRoleResponse, RbacAssignPermissionToRoleData, RbacAssignPermissionToRoleResponse, RbacRemovePermissionFromRoleData, RbacRemovePermissionFromRoleResponse, RbacGetRolePermissionsData, RbacGetRolePermissionsResponse, RbacAssignRoleToUserData, RbacAssignRoleToUserResponse, RbacRemoveRoleFromUserData, RbacRemoveRoleFromUserResponse, RbacGetUserRolesData, RbacGetUserRolesResponse, RbacGetUserPermissionsData, RbacGetUserPermissionsResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse } from './types.gen';
 
 export class ItemsService {
     /**
@@ -235,6 +235,515 @@ export class PrivateService {
     }
 }
 
+export class ProjectsService {
+    /**
+     * Create Project
+     * 创建新项目
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns Project Successful Response
+     * @throws ApiError
+     */
+    public static createProject(data: ProjectsCreateProjectData): CancelablePromise<ProjectsCreateProjectResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/projects/',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Read Projects
+     * 获取项目列表
+     * @param data The data for the request.
+     * @param data.skip
+     * @param data.limit
+     * @returns Project Successful Response
+     * @throws ApiError
+     */
+    public static readProjects(data: ProjectsReadProjectsData = {}): CancelablePromise<ProjectsReadProjectsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/projects/',
+            query: {
+                skip: data.skip,
+                limit: data.limit
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Project Statistics
+     * 获取项目统计信息
+     * @returns ProjectStatistics Successful Response
+     * @throws ApiError
+     */
+    public static getProjectStatistics(): CancelablePromise<ProjectsGetProjectStatisticsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/projects/statistics'
+        });
+    }
+    
+    /**
+     * Get Location Product Relationship
+     * 获取区域-产品关联数据，用于桑基图
+     * @returns any Successful Response
+     * @throws ApiError
+     */
+    public static getLocationProductRelationship(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/projects/statistics/location-product-relationship'
+        });
+    }
+    
+    /**
+     * Get Product Type Statistics
+     * 获取按产品和项目类型的统计数据
+     * @returns any Successful Response
+     * @throws ApiError
+     */
+    public static getProductTypeStatistics(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/projects/statistics/product-type'
+        });
+    }
+    
+    /**
+     * Read Project
+     * 获取项目详情
+     * @param data The data for the request.
+     * @param data.projectId
+     * @returns Project Successful Response
+     * @throws ApiError
+     */
+    public static readProject(data: ProjectsReadProjectData): CancelablePromise<ProjectsReadProjectResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/projects/{project_id}',
+            path: {
+                project_id: data.projectId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Project
+     * 更新项目信息
+     * @param data The data for the request.
+     * @param data.projectId
+     * @param data.requestBody
+     * @returns Project Successful Response
+     * @throws ApiError
+     */
+    public static updateProject(data: ProjectsUpdateProjectData): CancelablePromise<ProjectsUpdateProjectResponse> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/v1/projects/{project_id}',
+            path: {
+                project_id: data.projectId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Project
+     * 删除项目
+     * @param data The data for the request.
+     * @param data.projectId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deleteProject(data: ProjectsDeleteProjectData): CancelablePromise<ProjectsDeleteProjectResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/projects/{project_id}',
+            path: {
+                project_id: data.projectId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Role Assignment
+     * 添加角色分配
+     * @param data The data for the request.
+     * @param data.projectId
+     * @param data.requestBody
+     * @returns RoleAssignment Successful Response
+     * @throws ApiError
+     */
+    public static createRoleAssignment(data: ProjectsCreateRoleAssignmentData): CancelablePromise<ProjectsCreateRoleAssignmentResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/projects/{project_id}/roles',
+            path: {
+                project_id: data.projectId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Role Assignment
+     * 删除角色分配
+     * @param data The data for the request.
+     * @param data.projectId
+     * @param data.roleId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deleteRoleAssignment(data: ProjectsDeleteRoleAssignmentData): CancelablePromise<ProjectsDeleteRoleAssignmentResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/projects/{project_id}/roles/{role_id}',
+            path: {
+                project_id: data.projectId,
+                role_id: data.roleId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Milestone
+     * 添加里程碑
+     * @param data The data for the request.
+     * @param data.projectId
+     * @param data.requestBody
+     * @returns Milestone Successful Response
+     * @throws ApiError
+     */
+    public static createMilestone(data: ProjectsCreateMilestoneData): CancelablePromise<ProjectsCreateMilestoneResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/projects/{project_id}/milestones',
+            path: {
+                project_id: data.projectId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Read Project Milestones
+     * 获取项目里程碑列表
+     * @param data The data for the request.
+     * @param data.projectId
+     * @returns Milestone Successful Response
+     * @throws ApiError
+     */
+    public static readProjectMilestones(data: ProjectsReadProjectMilestonesData): CancelablePromise<ProjectsReadProjectMilestonesResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/projects/{project_id}/milestones',
+            path: {
+                project_id: data.projectId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Milestone
+     * 更新里程碑
+     * @param data The data for the request.
+     * @param data.projectId
+     * @param data.milestoneId
+     * @param data.requestBody
+     * @returns Milestone Successful Response
+     * @throws ApiError
+     */
+    public static updateMilestone(data: ProjectsUpdateMilestoneData): CancelablePromise<ProjectsUpdateMilestoneResponse> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/v1/projects/{project_id}/milestones/{milestone_id}',
+            path: {
+                project_id: data.projectId,
+                milestone_id: data.milestoneId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Milestone
+     * 删除里程碑
+     * @param data The data for the request.
+     * @param data.projectId
+     * @param data.milestoneId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deleteMilestone(data: ProjectsDeleteMilestoneData): CancelablePromise<ProjectsDeleteMilestoneResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/projects/{project_id}/milestones/{milestone_id}',
+            path: {
+                project_id: data.projectId,
+                milestone_id: data.milestoneId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Progress
+     * 添加进展
+     * @param data The data for the request.
+     * @param data.projectId
+     * @param data.requestBody
+     * @returns Progress Successful Response
+     * @throws ApiError
+     */
+    public static createProgress(data: ProjectsCreateProgressData): CancelablePromise<ProjectsCreateProgressResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/projects/{project_id}/progresses',
+            path: {
+                project_id: data.projectId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Read Project Progresses
+     * 获取项目进展列表
+     * @param data The data for the request.
+     * @param data.projectId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static readProjectProgresses(data: ProjectsReadProjectProgressesData): CancelablePromise<ProjectsReadProjectProgressesResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/projects/{project_id}/progresses',
+            path: {
+                project_id: data.projectId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Progress
+     * 更新进展
+     * @param data The data for the request.
+     * @param data.projectId
+     * @param data.progressId
+     * @param data.requestBody
+     * @returns Progress Successful Response
+     * @throws ApiError
+     */
+    public static updateProgress(data: ProjectsUpdateProgressData): CancelablePromise<ProjectsUpdateProgressResponse> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/v1/projects/{project_id}/progresses/{progress_id}',
+            path: {
+                project_id: data.projectId,
+                progress_id: data.progressId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Progress
+     * 删除进展
+     * @param data The data for the request.
+     * @param data.projectId
+     * @param data.progressId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deleteProgress(data: ProjectsDeleteProgressData): CancelablePromise<ProjectsDeleteProgressResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/projects/{project_id}/progresses/{progress_id}',
+            path: {
+                project_id: data.projectId,
+                progress_id: data.progressId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+}
+
+export class ProductDictService {
+    /**
+     * Create Product Dict
+     * 创建产品字典
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns ProductDict Successful Response
+     * @throws ApiError
+     */
+    public static createProductDict(data: { requestBody: { name: string; description?: string } }): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/product-dict/',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Read Product Dicts
+     * 获取产品字典列表
+     * @param data The data for the request.
+     * @param data.skip
+     * @param data.limit
+     * @returns ProductDict Successful Response
+     * @throws ApiError
+     */
+    public static readProductDicts(data: { skip?: number; limit?: number } = {}): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/product-dict/',
+            query: {
+                skip: data.skip,
+                limit: data.limit
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Read Product Dict
+     * 获取单个产品字典
+     * @param data The data for the request.
+     * @param data.productDictId
+     * @returns ProductDict Successful Response
+     * @throws ApiError
+     */
+    public static readProductDict(data: { productDictId: string }): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/product-dict/{product_dict_id}',
+            path: {
+                product_dict_id: data.productDictId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Product Dict
+     * 更新产品字典
+     * @param data The data for the request.
+     * @param data.productDictId
+     * @param data.requestBody
+     * @returns ProductDict Successful Response
+     * @throws ApiError
+     */
+    public static updateProductDict(data: { productDictId: string; requestBody: { name?: string; description?: string } }): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/v1/product-dict/{product_dict_id}',
+            path: {
+                product_dict_id: data.productDictId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Product Dict
+     * 删除产品字典
+     * @param data The data for the request.
+     * @param data.productDictId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deleteProductDict(data: { productDictId: string }): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/product-dict/{product_dict_id}',
+            path: {
+                product_dict_id: data.productDictId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Import From Projects
+     * 从现有项目产品中导入产品名称到字典
+     * @returns any Successful Response
+     * @throws ApiError
+     */
+    public static importFromProjects(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/product-dict/import-from-projects'
+        });
+    }
+}
+
 export class RbacService {
     /**
      * Get Roles Working
@@ -253,8 +762,7 @@ export class RbacService {
      * Create Role
      * 创建角色
      * @param data The data for the request.
-     * @param data.name
-     * @param data.description
+     * @param data.requestBody
      * @returns RolePublic Successful Response
      * @throws ApiError
      */
@@ -262,10 +770,8 @@ export class RbacService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/v1/rbac/roles',
-            query: {
-                name: data.name,
-                description: data.description
-            },
+            body: data.requestBody,
+            mediaType: 'application/json',
             errors: {
                 422: 'Validation Error'
             }
@@ -289,10 +795,7 @@ export class RbacService {
      * Create Permission
      * 创建权限
      * @param data The data for the request.
-     * @param data.name
-     * @param data.resource
-     * @param data.action
-     * @param data.description
+     * @param data.requestBody
      * @returns PermissionPublic Successful Response
      * @throws ApiError
      */
@@ -300,12 +803,8 @@ export class RbacService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/v1/rbac/permissions',
-            query: {
-                name: data.name,
-                resource: data.resource,
-                action: data.action,
-                description: data.description
-            },
+            body: data.requestBody,
+            mediaType: 'application/json',
             errors: {
                 422: 'Validation Error'
             }
@@ -317,10 +816,7 @@ export class RbacService {
      * 更新权限
      * @param data The data for the request.
      * @param data.permissionId
-     * @param data.name
-     * @param data.resource
-     * @param data.action
-     * @param data.description
+     * @param data.requestBody
      * @returns PermissionPublic Successful Response
      * @throws ApiError
      */
@@ -331,12 +827,8 @@ export class RbacService {
             path: {
                 permission_id: data.permissionId
             },
-            query: {
-                name: data.name,
-                resource: data.resource,
-                action: data.action,
-                description: data.description
-            },
+            body: data.requestBody,
+            mediaType: 'application/json',
             errors: {
                 422: 'Validation Error'
             }
@@ -369,8 +861,7 @@ export class RbacService {
      * 更新角色
      * @param data The data for the request.
      * @param data.roleId
-     * @param data.name
-     * @param data.description
+     * @param data.requestBody
      * @returns RolePublic Successful Response
      * @throws ApiError
      */
@@ -381,10 +872,8 @@ export class RbacService {
             path: {
                 role_id: data.roleId
             },
-            query: {
-                name: data.name,
-                description: data.description
-            },
+            body: data.requestBody,
+            mediaType: 'application/json',
             errors: {
                 422: 'Validation Error'
             }

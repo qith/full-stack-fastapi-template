@@ -67,7 +67,7 @@ function Login() {
     >
       <Image
         src={Logo}
-        alt="FastAPI logo"
+        alt="PMinfo logo"
         height="auto"
         maxW="2xs"
         alignSelf="center"

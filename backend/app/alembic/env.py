@@ -20,6 +20,7 @@ fileConfig(config.config_file_name)
 
 from app.models import SQLModel  # noqa
 from app.core.config import settings # noqa
+from app.models_pm import Project, RoleAssignment, Milestone, Progress, ProductDict  # noqa
 
 target_metadata = SQLModel.metadata
 

@@ -194,6 +194,114 @@ export const MessageSchema = {
     title: 'Message'
 } as const;
 
+export const MilestoneSchema = {
+    properties: {
+        milestone_date: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Milestone Date'
+        },
+        description: {
+            type: 'string',
+            title: 'Description'
+        },
+        status: {
+            '$ref': '#/components/schemas/MilestoneStatus',
+            default: '正常'
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        project_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Project Id'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        }
+    },
+    type: 'object',
+    required: ['milestone_date', 'description', 'id', 'project_id', 'created_at', 'updated_at'],
+    title: 'Milestone'
+} as const;
+
+export const MilestoneCreateSchema = {
+    properties: {
+        milestone_date: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Milestone Date'
+        },
+        description: {
+            type: 'string',
+            title: 'Description'
+        },
+        status: {
+            '$ref': '#/components/schemas/MilestoneStatus',
+            default: '正常'
+        }
+    },
+    type: 'object',
+    required: ['milestone_date', 'description'],
+    title: 'MilestoneCreate'
+} as const;
+
+export const MilestoneStatusSchema = {
+    type: 'string',
+    enum: ['正常', '延期', '完成'],
+    title: 'MilestoneStatus'
+} as const;
+
+export const MilestoneUpdateSchema = {
+    properties: {
+        milestone_date: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Milestone Date'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        status: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/MilestoneStatus'
+                },
+                {
+                    type: 'null'
+                }
+            ]
+        }
+    },
+    type: 'object',
+    title: 'MilestoneUpdate'
+} as const;
+
 export const NewPasswordSchema = {
     properties: {
         token: {
@@ -210,6 +318,30 @@ export const NewPasswordSchema = {
     type: 'object',
     required: ['token', 'new_password'],
     title: 'NewPassword'
+} as const;
+
+export const PermissionCreateSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            title: 'Name'
+        },
+        resource: {
+            type: 'string',
+            title: 'Resource'
+        },
+        action: {
+            type: 'string',
+            title: 'Action'
+        },
+        description: {
+            type: 'string',
+            title: 'Description'
+        }
+    },
+    type: 'object',
+    required: ['name', 'resource', 'action'],
+    title: 'PermissionCreate'
 } as const;
 
 export const PermissionPublicSchema = {
@@ -248,6 +380,29 @@ export const PermissionPublicSchema = {
     title: 'PermissionPublic'
 } as const;
 
+export const PermissionUpdateSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            title: 'Name'
+        },
+        resource: {
+            type: 'string',
+            title: 'Resource'
+        },
+        action: {
+            type: 'string',
+            title: 'Action'
+        },
+        description: {
+            type: 'string',
+            title: 'Description'
+        }
+    },
+    type: 'object',
+    title: 'PermissionUpdate'
+} as const;
+
 export const PrivateUserCreateSchema = {
     properties: {
         email: {
@@ -271,6 +426,727 @@ export const PrivateUserCreateSchema = {
     type: 'object',
     required: ['email', 'password', 'full_name'],
     title: 'PrivateUserCreate'
+} as const;
+
+export const ProgressSchema = {
+    properties: {
+        description: {
+            type: 'string',
+            title: 'Description'
+        },
+        progress_type: {
+            '$ref': '#/components/schemas/ProgressType',
+            default: '日进展'
+        },
+        tracking_user_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Tracking User Id'
+        },
+        progress_date: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Progress Date'
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        project_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Project Id'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        }
+    },
+    type: 'object',
+    required: ['description', 'tracking_user_id', 'id', 'project_id', 'created_at', 'updated_at'],
+    title: 'Progress'
+} as const;
+
+export const ProgressCreateSchema = {
+    properties: {
+        description: {
+            type: 'string',
+            title: 'Description'
+        },
+        progress_type: {
+            '$ref': '#/components/schemas/ProgressType',
+            default: '日进展'
+        },
+        tracking_user_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Tracking User Id'
+        },
+        progress_date: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Progress Date'
+        }
+    },
+    type: 'object',
+    required: ['description', 'tracking_user_id'],
+    title: 'ProgressCreate'
+} as const;
+
+export const ProgressTypeSchema = {
+    type: 'string',
+    enum: ['日进展', '周进展'],
+    title: 'ProgressType'
+} as const;
+
+export const ProgressUpdateSchema = {
+    properties: {
+        description: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        progress_type: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/ProgressType'
+                },
+                {
+                    type: 'null'
+                }
+            ]
+        },
+        tracking_user_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Tracking User Id'
+        },
+        progress_date: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Progress Date'
+        }
+    },
+    type: 'object',
+    title: 'ProgressUpdate'
+} as const;
+
+export const ProjectSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            title: 'Name'
+        },
+        project_type: {
+            type: 'string',
+            title: 'Project Type'
+        },
+        location: {
+            type: 'string',
+            title: 'Location'
+        },
+        contract_amount: {
+            anyOf: [
+                {
+                    type: 'number'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Contract Amount'
+        },
+        background: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Background'
+        },
+        import_time: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Import Time'
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        },
+        products: {
+            items: {
+                '$ref': '#/components/schemas/ProjectProduct'
+            },
+            type: 'array',
+            title: 'Products',
+            default: []
+        },
+        role_assignments: {
+            items: {
+                '$ref': '#/components/schemas/RoleAssignment'
+            },
+            type: 'array',
+            title: 'Role Assignments',
+            default: []
+        },
+        milestones: {
+            items: {
+                '$ref': '#/components/schemas/Milestone'
+            },
+            type: 'array',
+            title: 'Milestones',
+            default: []
+        },
+        progresses: {
+            items: {
+                '$ref': '#/components/schemas/Progress'
+            },
+            type: 'array',
+            title: 'Progresses',
+            default: []
+        }
+    },
+    type: 'object',
+    required: ['name', 'project_type', 'location', 'id', 'created_at', 'updated_at'],
+    title: 'Project'
+} as const;
+
+export const ProjectCountByLocationSchema = {
+    properties: {
+        location: {
+            type: 'string',
+            title: 'Location'
+        },
+        count: {
+            type: 'integer',
+            title: 'Count'
+        }
+    },
+    type: 'object',
+    required: ['location', 'count'],
+    title: 'ProjectCountByLocation'
+} as const;
+
+export const ProjectCountByProductSchema = {
+    properties: {
+        product: {
+            type: 'string',
+            title: 'Product'
+        },
+        count: {
+            type: 'integer',
+            title: 'Count'
+        }
+    },
+    type: 'object',
+    required: ['product', 'count'],
+    title: 'ProjectCountByProduct'
+} as const;
+
+export const ProjectCountByTypeSchema = {
+    properties: {
+        project_type: {
+            type: 'string',
+            title: 'Project Type'
+        },
+        count: {
+            type: 'integer',
+            title: 'Count'
+        }
+    },
+    type: 'object',
+    required: ['project_type', 'count'],
+    title: 'ProjectCountByType'
+} as const;
+
+export const ProjectCreateSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            title: 'Name'
+        },
+        project_type: {
+            type: 'string',
+            title: 'Project Type'
+        },
+        location: {
+            type: 'string',
+            title: 'Location'
+        },
+        contract_amount: {
+            anyOf: [
+                {
+                    type: 'number'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Contract Amount'
+        },
+        background: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Background'
+        },
+        import_time: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Import Time'
+        },
+        products: {
+            anyOf: [
+                {
+                    items: {
+                        '$ref': '#/components/schemas/ProjectProductCreate'
+                    },
+                    type: 'array'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Products',
+            default: []
+        },
+        role_assignments: {
+            anyOf: [
+                {
+                    items: {
+                        '$ref': '#/components/schemas/RoleAssignmentCreate'
+                    },
+                    type: 'array'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Role Assignments',
+            default: []
+        },
+        milestones: {
+            anyOf: [
+                {
+                    items: {
+                        '$ref': '#/components/schemas/MilestoneCreate'
+                    },
+                    type: 'array'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Milestones',
+            default: []
+        }
+    },
+    type: 'object',
+    required: ['name', 'project_type', 'location'],
+    title: 'ProjectCreate'
+} as const;
+
+export const ProjectProductSchema = {
+    properties: {
+        product_name: {
+            type: 'string',
+            title: 'Product Name'
+        },
+        product_amount: {
+            anyOf: [
+                {
+                    type: 'number'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Product Amount'
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        project_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Project Id'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        }
+    },
+    type: 'object',
+    required: ['product_name', 'id', 'project_id', 'created_at'],
+    title: 'ProjectProduct'
+} as const;
+
+export const ProjectProductCreateSchema = {
+    properties: {
+        product_name: {
+            type: 'string',
+            title: 'Product Name'
+        },
+        product_amount: {
+            anyOf: [
+                {
+                    type: 'number'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Product Amount'
+        }
+    },
+    type: 'object',
+    required: ['product_name'],
+    title: 'ProjectProductCreate'
+} as const;
+
+export const ProjectStatisticsSchema = {
+    properties: {
+        by_location: {
+            items: {
+                '$ref': '#/components/schemas/ProjectCountByLocation'
+            },
+            type: 'array',
+            title: 'By Location'
+        },
+        by_product: {
+            items: {
+                '$ref': '#/components/schemas/ProjectCountByProduct'
+            },
+            type: 'array',
+            title: 'By Product'
+        },
+        by_type: {
+            items: {
+                '$ref': '#/components/schemas/ProjectCountByType'
+            },
+            type: 'array',
+            title: 'By Type'
+        },
+        total_projects: {
+            type: 'integer',
+            title: 'Total Projects'
+        },
+        total_contract_amount: {
+            type: 'number',
+            title: 'Total Contract Amount'
+        }
+    },
+    type: 'object',
+    required: ['by_location', 'by_product', 'by_type', 'total_projects', 'total_contract_amount'],
+    title: 'ProjectStatistics'
+} as const;
+
+export const ProjectUpdateSchema = {
+    properties: {
+        name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Name'
+        },
+        project_type: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Project Type'
+        },
+        location: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Location'
+        },
+        contract_amount: {
+            anyOf: [
+                {
+                    type: 'number'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Contract Amount'
+        },
+        background: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Background'
+        },
+        import_time: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Import Time'
+        },
+        products: {
+            anyOf: [
+                {
+                    items: {
+                        '$ref': '#/components/schemas/ProjectProductCreate'
+                    },
+                    type: 'array'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Products'
+        },
+        role_assignments: {
+            anyOf: [
+                {
+                    items: {
+                        '$ref': '#/components/schemas/RoleAssignmentCreate'
+                    },
+                    type: 'array'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Role Assignments'
+        },
+        milestones: {
+            anyOf: [
+                {
+                    items: {
+                        '$ref': '#/components/schemas/MilestoneCreate'
+                    },
+                    type: 'array'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Milestones'
+        }
+    },
+    type: 'object',
+    title: 'ProjectUpdate'
+} as const;
+
+export const RoleAssignmentSchema = {
+    properties: {
+        role_name: {
+            type: 'string',
+            title: 'Role Name'
+        },
+        user_name: {
+            type: 'string',
+            title: 'User Name'
+        },
+        user_email: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'User Email'
+        },
+        user_phone: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'User Phone'
+        },
+        user_description: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'User Description'
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        project_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Project Id'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        }
+    },
+    type: 'object',
+    required: ['role_name', 'user_name', 'id', 'project_id', 'created_at'],
+    title: 'RoleAssignment'
+} as const;
+
+export const RoleAssignmentCreateSchema = {
+    properties: {
+        role_name: {
+            type: 'string',
+            title: 'Role Name'
+        },
+        user_name: {
+            type: 'string',
+            title: 'User Name'
+        },
+        user_email: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'User Email'
+        },
+        user_phone: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'User Phone'
+        },
+        user_description: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'User Description'
+        }
+    },
+    type: 'object',
+    required: ['role_name', 'user_name'],
+    title: 'RoleAssignmentCreate'
+} as const;
+
+export const RoleCreateSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            title: 'Name'
+        },
+        description: {
+            type: 'string',
+            title: 'Description'
+        }
+    },
+    type: 'object',
+    required: ['name'],
+    title: 'RoleCreate'
 } as const;
 
 export const RolePublicSchema = {
@@ -307,6 +1183,21 @@ export const RolePublicSchema = {
     type: 'object',
     required: ['id', 'name'],
     title: 'RolePublic'
+} as const;
+
+export const RoleUpdateSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            title: 'Name'
+        },
+        description: {
+            type: 'string',
+            title: 'Description'
+        }
+    },
+    type: 'object',
+    title: 'RoleUpdate'
 } as const;
 
 export const TokenSchema = {
