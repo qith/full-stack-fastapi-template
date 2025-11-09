@@ -7,7 +7,8 @@ import {
   Heading, 
   Input, 
   Table, 
-  Text
+  Text,
+  Select
 } from "@chakra-ui/react"
 import { Field } from "@/components/ui/field"
 import { toaster } from "@/components/ui/toaster"
@@ -43,7 +44,10 @@ const PermissionManager = () => {
     name: "",
     resource: "",
     action: "",
-    description: ""
+    description: "",
+    permission_type: "api",
+    menu_path: "",
+    button_id: ""
   })
 
   const { data: permissions, isLoading } = useQuery({
@@ -124,7 +128,10 @@ const PermissionManager = () => {
       name: "",
       resource: "",
       action: "",
-      description: ""
+      description: "",
+      permission_type: "api",
+      menu_path: "",
+      button_id: ""
     })
   }
 
@@ -138,7 +145,10 @@ const PermissionManager = () => {
       name: permission.name,
       resource: permission.resource,
       action: permission.action,
-      description: permission.description || ""
+      description: permission.description || "",
+      permission_type: (permission as any).permission_type || "api",
+      menu_path: (permission as any).menu_path || "",
+      button_id: (permission as any).button_id || ""
     })
     setIsEditOpen(true)
   }
@@ -188,53 +198,78 @@ const PermissionManager = () => {
       <Table.Root size={{ base: "sm", md: "md" }}>
         <Table.Header>
           <Table.Row>
+            <Table.ColumnHeader>权限类型</Table.ColumnHeader>
             <Table.ColumnHeader>权限名称</Table.ColumnHeader>
-            <Table.ColumnHeader>资源</Table.ColumnHeader>
+            <Table.ColumnHeader>资源/路径/标识</Table.ColumnHeader>
             <Table.ColumnHeader>操作</Table.ColumnHeader>
             <Table.ColumnHeader>描述</Table.ColumnHeader>
             <Table.ColumnHeader>操作</Table.ColumnHeader>
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {Array.isArray(permissions) && permissions.map((permission: any) => (
-            <Table.Row key={permission.id}>
-              <Table.Cell>
-                <Badge colorScheme="purple" variant="solid">
-                  {permission.name}
-                </Badge>
-              </Table.Cell>
-              <Table.Cell>
-                <Badge colorScheme="orange" variant="outline">
-                  {permission.resource}
-                </Badge>
-              </Table.Cell>
-              <Table.Cell>
-                <Badge colorScheme="teal" variant="outline">
-                  {permission.action}
-                </Badge>
-              </Table.Cell>
-              <Table.Cell>{permission.description || "无描述"}</Table.Cell>
-              <Table.Cell>
-                <Flex gap={2}>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleEdit(permission)}
-                  >
-                    编辑
-                  </Button>
-                  <Button
-                    size="sm"
-                    colorScheme="red"
-                    variant="outline"
-                    onClick={() => handleDelete(permission)}
-                  >
-                    删除
-                  </Button>
-                </Flex>
-              </Table.Cell>
-            </Table.Row>
-          ))}
+          {Array.isArray(permissions) && permissions.map((permission: any) => {
+            const permissionType = permission.permission_type || "api"
+            const typeLabel = permissionType === "menu" ? "菜单" : permissionType === "button" ? "按钮" : "API"
+            const typeColor = permissionType === "menu" ? "blue" : permissionType === "button" ? "green" : "purple"
+            const detailValue = permissionType === "menu" 
+              ? permission.menu_path 
+              : permissionType === "button" 
+              ? permission.button_id 
+              : permission.resource
+            
+            return (
+              <Table.Row key={permission.id}>
+                <Table.Cell>
+                  <Badge colorScheme={typeColor} variant="solid">
+                    {typeLabel}
+                  </Badge>
+                </Table.Cell>
+                <Table.Cell>
+                  <Badge colorScheme="purple" variant="solid">
+                    {permission.name}
+                  </Badge>
+                </Table.Cell>
+                <Table.Cell>
+                  {permissionType === "api" ? (
+                    <Badge colorScheme="orange" variant="outline">
+                      {detailValue}
+                    </Badge>
+                  ) : (
+                    <Text fontSize="sm">{detailValue || "无"}</Text>
+                  )}
+                </Table.Cell>
+                <Table.Cell>
+                  {permissionType === "api" ? (
+                    <Badge colorScheme="teal" variant="outline">
+                      {permission.action}
+                    </Badge>
+                  ) : (
+                    <Text fontSize="sm">-</Text>
+                  )}
+                </Table.Cell>
+                <Table.Cell>{permission.description || "无描述"}</Table.Cell>
+                <Table.Cell>
+                  <Flex gap={2}>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleEdit(permission)}
+                    >
+                      编辑
+                    </Button>
+                    <Button
+                      size="sm"
+                      colorScheme="red"
+                      variant="outline"
+                      onClick={() => handleDelete(permission)}
+                    >
+                      删除
+                    </Button>
+                  </Flex>
+                </Table.Cell>
+              </Table.Row>
+            )
+          })}
         </Table.Body>
       </Table.Root>
 
@@ -264,6 +299,21 @@ const PermissionManager = () => {
               }}
             >
               <Flex direction="column" gap={4}>
+              <Field label="权限类型">
+                <Select.Root
+                  value={formData.permission_type}
+                  onValueChange={(e) => setFormData({ ...formData, permission_type: e.value[0] })}
+                >
+                  <Select.Trigger>
+                    <Select.ValueText />
+                  </Select.Trigger>
+                  <Select.Content>
+                    <Select.Item value="api">API权限</Select.Item>
+                    <Select.Item value="menu">菜单权限</Select.Item>
+                    <Select.Item value="button">按钮权限</Select.Item>
+                  </Select.Content>
+                </Select.Root>
+              </Field>
               <Field label="权限名称">
                 <Input
                   value={formData.name}
@@ -271,20 +321,42 @@ const PermissionManager = () => {
                   placeholder="例如: user.read"
                 />
               </Field>
-              <Field label="资源">
-                <Input
-                  value={formData.resource}
-                  onChange={(e) => setFormData({ ...formData, resource: e.target.value })}
-                  placeholder="例如: users"
-                />
-              </Field>
-              <Field label="操作">
-                <Input
-                  value={formData.action}
-                  onChange={(e) => setFormData({ ...formData, action: e.target.value })}
-                  placeholder="例如: read"
-                />
-              </Field>
+              {formData.permission_type === "api" && (
+                <>
+                  <Field label="资源">
+                    <Input
+                      value={formData.resource}
+                      onChange={(e) => setFormData({ ...formData, resource: e.target.value })}
+                      placeholder="例如: users"
+                    />
+                  </Field>
+                  <Field label="操作">
+                    <Input
+                      value={formData.action}
+                      onChange={(e) => setFormData({ ...formData, action: e.target.value })}
+                      placeholder="例如: read"
+                    />
+                  </Field>
+                </>
+              )}
+              {formData.permission_type === "menu" && (
+                <Field label="菜单路径">
+                  <Input
+                    value={formData.menu_path}
+                    onChange={(e) => setFormData({ ...formData, menu_path: e.target.value })}
+                    placeholder="例如: /project-management"
+                  />
+                </Field>
+              )}
+              {formData.permission_type === "button" && (
+                <Field label="按钮标识">
+                  <Input
+                    value={formData.button_id}
+                    onChange={(e) => setFormData({ ...formData, button_id: e.target.value })}
+                    placeholder="例如: create-project"
+                  />
+                </Field>
+              )}
               <Field label="描述">
                 <Input
                   value={formData.description}
@@ -336,6 +408,21 @@ const PermissionManager = () => {
               }}
             >
               <Flex direction="column" gap={4}>
+              <Field label="权限类型">
+                <Select.Root
+                  value={formData.permission_type}
+                  onValueChange={(e) => setFormData({ ...formData, permission_type: e.value[0] })}
+                >
+                  <Select.Trigger>
+                    <Select.ValueText />
+                  </Select.Trigger>
+                  <Select.Content>
+                    <Select.Item value="api">API权限</Select.Item>
+                    <Select.Item value="menu">菜单权限</Select.Item>
+                    <Select.Item value="button">按钮权限</Select.Item>
+                  </Select.Content>
+                </Select.Root>
+              </Field>
               <Field label="权限名称">
                 <Input
                   value={formData.name}
@@ -343,20 +430,42 @@ const PermissionManager = () => {
                   placeholder="例如: user.read"
                 />
               </Field>
-              <Field label="资源">
-                <Input
-                  value={formData.resource}
-                  onChange={(e) => setFormData({ ...formData, resource: e.target.value })}
-                  placeholder="例如: users"
-                />
-              </Field>
-              <Field label="操作">
-                <Input
-                  value={formData.action}
-                  onChange={(e) => setFormData({ ...formData, action: e.target.value })}
-                  placeholder="例如: read"
-                />
-              </Field>
+              {formData.permission_type === "api" && (
+                <>
+                  <Field label="资源">
+                    <Input
+                      value={formData.resource}
+                      onChange={(e) => setFormData({ ...formData, resource: e.target.value })}
+                      placeholder="例如: users"
+                    />
+                  </Field>
+                  <Field label="操作">
+                    <Input
+                      value={formData.action}
+                      onChange={(e) => setFormData({ ...formData, action: e.target.value })}
+                      placeholder="例如: read"
+                    />
+                  </Field>
+                </>
+              )}
+              {formData.permission_type === "menu" && (
+                <Field label="菜单路径">
+                  <Input
+                    value={formData.menu_path}
+                    onChange={(e) => setFormData({ ...formData, menu_path: e.target.value })}
+                    placeholder="例如: /project-management"
+                  />
+                </Field>
+              )}
+              {formData.permission_type === "button" && (
+                <Field label="按钮标识">
+                  <Input
+                    value={formData.button_id}
+                    onChange={(e) => setFormData({ ...formData, button_id: e.target.value })}
+                    placeholder="例如: create-project"
+                  />
+                </Field>
+              )}
               <Field label="描述">
                 <Input
                   value={formData.description}

@@ -1,4 +1,5 @@
 import uuid
+from enum import Enum
 from typing import List, Optional
 from sqlmodel import Field, Relationship, SQLModel
 from pydantic import EmailStr
@@ -18,6 +19,13 @@ class Role(SQLModel, table=True):
     users: List["UserRole"] = Relationship(back_populates="role")
 
 
+# 权限类型枚举
+class PermissionType(str, Enum):
+    MENU = "menu"      # 菜单权限
+    BUTTON = "button"  # 按钮权限
+    API = "api"        # API权限（原有类型）
+
+
 # 权限模型
 class Permission(SQLModel, table=True):
     __tablename__ = "permissions"
@@ -27,6 +35,9 @@ class Permission(SQLModel, table=True):
     resource: str = Field(max_length=50)  # 资源类型，如 "users", "items", "admin"
     action: str = Field(max_length=50)    # 操作类型，如 "read", "write", "delete"
     description: Optional[str] = Field(default=None, max_length=255)
+    permission_type: str = Field(default="api", max_length=20)  # 权限类型：menu/button/api
+    menu_path: Optional[str] = Field(default=None, max_length=200)  # 菜单路径，如 "/project-management"
+    button_id: Optional[str] = Field(default=None, max_length=100)  # 按钮标识，如 "create-project"
     
     # 关系
     roles: List["RolePermission"] = Relationship(back_populates="permission")
@@ -69,6 +80,9 @@ class PermissionPublic(SQLModel):
     resource: str
     action: str
     description: Optional[str] = None
+    permission_type: str = "api"  # 权限类型：menu/button/api
+    menu_path: Optional[str] = None  # 菜单路径
+    button_id: Optional[str] = None  # 按钮标识
 
 
 class UserWithRoles(SQLModel):

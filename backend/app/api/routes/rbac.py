@@ -16,12 +16,18 @@ class PermissionCreate(BaseModel):
     resource: str
     action: str
     description: str = None
+    permission_type: str = "api"  # 权限类型：menu/button/api
+    menu_path: str = None  # 菜单路径
+    button_id: str = None  # 按钮标识
 
 class PermissionUpdate(BaseModel):
     name: str = None
     resource: str = None
     action: str = None
     description: str = None
+    permission_type: str = None
+    menu_path: str = None
+    button_id: str = None
 
 class RoleCreate(BaseModel):
     name: str
@@ -66,7 +72,10 @@ def get_permissions_working(current_user = Depends(get_current_user)):
                     name=perm.name,
                     resource=perm.resource,
                     action=perm.action,
-                    description=perm.description
+                    description=perm.description,
+                    permission_type=getattr(perm, 'permission_type', 'api'),
+                    menu_path=getattr(perm, 'menu_path', None),
+                    button_id=getattr(perm, 'button_id', None)
                 )
                 for perm in permissions
             ]
@@ -94,14 +103,20 @@ def create_permission(
                 permission_data.name, 
                 permission_data.resource, 
                 permission_data.action, 
-                permission_data.description
+                permission_data.description,
+                permission_data.permission_type,
+                permission_data.menu_path,
+                permission_data.button_id
             )
             return PermissionPublic(
                 id=permission.id,
                 name=permission.name,
                 resource=permission.resource,
                 action=permission.action,
-                description=permission.description
+                description=permission.description,
+                permission_type=getattr(permission, 'permission_type', 'api'),
+                menu_path=getattr(permission, 'menu_path', None),
+                button_id=getattr(permission, 'button_id', None)
             )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error creating permission: {str(e)}")
@@ -125,14 +140,20 @@ def update_permission(
                 permission_data.name, 
                 permission_data.resource, 
                 permission_data.action, 
-                permission_data.description
+                permission_data.description,
+                permission_data.permission_type,
+                permission_data.menu_path,
+                permission_data.button_id
             )
             return PermissionPublic(
                 id=permission.id,
                 name=permission.name,
                 resource=permission.resource,
                 action=permission.action,
-                description=permission.description
+                description=permission.description,
+                permission_type=getattr(permission, 'permission_type', 'api'),
+                menu_path=getattr(permission, 'menu_path', None),
+                button_id=getattr(permission, 'button_id', None)
             )
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
@@ -210,7 +231,10 @@ def update_role(
                         name=perm.name,
                         resource=perm.resource,
                         action=perm.action,
-                        description=perm.description
+                        description=perm.description,
+                        permission_type=getattr(perm, 'permission_type', 'api'),
+                        menu_path=getattr(perm, 'menu_path', None),
+                        button_id=getattr(perm, 'button_id', None)
                     )
                     for perm in permissions
                 ]
@@ -303,7 +327,10 @@ def get_role_permissions(
                     name=perm.name,
                     resource=perm.resource,
                     action=perm.action,
-                    description=perm.description
+                    description=perm.description,
+                    permission_type=getattr(perm, 'permission_type', 'api'),
+                    menu_path=getattr(perm, 'menu_path', None),
+                    button_id=getattr(perm, 'button_id', None)
                 )
                 for perm in permissions
             ]
@@ -399,7 +426,10 @@ def get_user_permissions(
                     name=perm.name,
                     resource=perm.resource,
                     action=perm.action,
-                    description=perm.description
+                    description=perm.description,
+                    permission_type=getattr(perm, 'permission_type', 'api'),
+                    menu_path=getattr(perm, 'menu_path', None),
+                    button_id=getattr(perm, 'button_id', None)
                 )
                 for perm in permissions
             ]

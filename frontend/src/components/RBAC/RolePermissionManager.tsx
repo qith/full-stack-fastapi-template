@@ -6,8 +6,10 @@ import {
   Flex, 
   Heading, 
   Table, 
-  Text
+  Text,
+  Tabs
 } from "@chakra-ui/react"
+import { DialogCloseTrigger } from "@/components/ui/dialog"
 import { toaster } from "@/components/ui/toaster"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useState, useEffect, useRef } from "react"
@@ -122,6 +124,29 @@ const RolePermissionManager = () => {
            rolePermissions.some((p: any) => p.id === permissionId)
   }
 
+  // 按权限类型分组
+  const groupedPermissions = Array.isArray(permissions) ? {
+    menu: permissions.filter((p: any) => {
+      const type = p.permission_type || 'api'
+      return type === 'menu'
+    }),
+    button: permissions.filter((p: any) => {
+      const type = p.permission_type || 'api'
+      return type === 'button'
+    }),
+    api: permissions.filter((p: any) => {
+      const type = p.permission_type || 'api'
+      return type === 'api'
+    })
+  } : { menu: [], button: [], api: [] }
+
+  // 按权限类型分组已分配的权限
+  const groupedRolePermissions = Array.isArray(rolePermissions) ? {
+    menu: rolePermissions.filter((p: any) => p.permission_type === 'menu'),
+    button: rolePermissions.filter((p: any) => p.permission_type === 'button'),
+    api: rolePermissions.filter((p: any) => (p.permission_type === 'api' || !p.permission_type))
+  } : { menu: [], button: [], api: [] }
+
   if (!user?.is_superuser) {
     return (
       <Container maxW="full">
@@ -194,7 +219,11 @@ const RolePermissionManager = () => {
               <Button
                 size="sm"
                 colorScheme="blue"
-                onClick={() => setIsAssignOpen(true)}
+                onClick={() => {
+                  if (selectedRole) {
+                    setIsAssignOpen(true)
+                  }
+                }}
               >
                 分配权限
               </Button>
@@ -203,126 +232,381 @@ const RolePermissionManager = () => {
             {rolePermissionsLoading ? (
               <div>加载权限中...</div>
             ) : (
-              <Table.Root size="sm">
-                <Table.Header>
-                  <Table.Row>
-                    <Table.ColumnHeader>权限名称</Table.ColumnHeader>
-                    <Table.ColumnHeader>资源</Table.ColumnHeader>
-                    <Table.ColumnHeader>操作</Table.ColumnHeader>
-                    <Table.ColumnHeader>描述</Table.ColumnHeader>
-                    <Table.ColumnHeader>操作</Table.ColumnHeader>
-                  </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                  {Array.isArray(rolePermissions) && rolePermissions.map((permission: any) => (
-                    <Table.Row key={permission.id}>
-                      <Table.Cell>
-                        <Badge colorScheme="purple" variant="solid">
-                          {permission.name}
-                        </Badge>
-                      </Table.Cell>
-                      <Table.Cell>
-                        <Badge colorScheme="orange" variant="outline">
-                          {permission.resource}
-                        </Badge>
-                      </Table.Cell>
-                      <Table.Cell>
-                        <Badge colorScheme="teal" variant="outline">
-                          {permission.action}
-                        </Badge>
-                      </Table.Cell>
-                      <Table.Cell>{permission.description || "无描述"}</Table.Cell>
-                      <Table.Cell>
-                        <Button
-                          size="sm"
-                          colorScheme="red"
-                          variant="outline"
-                          onClick={() => handleRemovePermission(permission)}
-                        >
-                          移除
-                        </Button>
-                      </Table.Cell>
-                    </Table.Row>
-                  ))}
-                </Table.Body>
-              </Table.Root>
+              <Tabs.Root defaultValue="menu">
+                <Tabs.List>
+                  <Tabs.Trigger value="menu">
+                    菜单权限 ({groupedRolePermissions.menu.length})
+                  </Tabs.Trigger>
+                  <Tabs.Trigger value="button">
+                    按钮权限 ({groupedRolePermissions.button.length})
+                  </Tabs.Trigger>
+                  <Tabs.Trigger value="api">
+                    API权限 ({groupedRolePermissions.api.length})
+                  </Tabs.Trigger>
+                </Tabs.List>
+                <Tabs.Content value="menu" pt={4}>
+                  <Table.Root size="sm">
+                    <Table.Header>
+                      <Table.Row>
+                        <Table.ColumnHeader>权限名称</Table.ColumnHeader>
+                        <Table.ColumnHeader>菜单路径</Table.ColumnHeader>
+                        <Table.ColumnHeader>描述</Table.ColumnHeader>
+                        <Table.ColumnHeader>操作</Table.ColumnHeader>
+                      </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                      {groupedRolePermissions.menu.map((permission: any) => (
+                        <Table.Row key={permission.id}>
+                          <Table.Cell>
+                            <Badge colorScheme="purple" variant="solid">
+                              {permission.name}
+                            </Badge>
+                          </Table.Cell>
+                          <Table.Cell>{permission.menu_path || "无路径"}</Table.Cell>
+                          <Table.Cell>{permission.description || "无描述"}</Table.Cell>
+                          <Table.Cell>
+                            <Button
+                              size="sm"
+                              colorScheme="red"
+                              variant="outline"
+                              onClick={() => handleRemovePermission(permission)}
+                            >
+                              移除
+                            </Button>
+                          </Table.Cell>
+                        </Table.Row>
+                      ))}
+                      {groupedRolePermissions.menu.length === 0 && (
+                        <Table.Row>
+                          <Table.Cell colSpan={4} textAlign="center">
+                            <Text color="gray.500">暂无菜单权限</Text>
+                          </Table.Cell>
+                        </Table.Row>
+                      )}
+                    </Table.Body>
+                  </Table.Root>
+                </Tabs.Content>
+                <Tabs.Content value="button" pt={4}>
+                  <Table.Root size="sm">
+                    <Table.Header>
+                      <Table.Row>
+                        <Table.ColumnHeader>权限名称</Table.ColumnHeader>
+                        <Table.ColumnHeader>按钮标识</Table.ColumnHeader>
+                        <Table.ColumnHeader>描述</Table.ColumnHeader>
+                        <Table.ColumnHeader>操作</Table.ColumnHeader>
+                      </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                      {groupedRolePermissions.button.map((permission: any) => (
+                        <Table.Row key={permission.id}>
+                          <Table.Cell>
+                            <Badge colorScheme="purple" variant="solid">
+                              {permission.name}
+                            </Badge>
+                          </Table.Cell>
+                          <Table.Cell>{permission.button_id || "无标识"}</Table.Cell>
+                          <Table.Cell>{permission.description || "无描述"}</Table.Cell>
+                          <Table.Cell>
+                            <Button
+                              size="sm"
+                              colorScheme="red"
+                              variant="outline"
+                              onClick={() => handleRemovePermission(permission)}
+                            >
+                              移除
+                            </Button>
+                          </Table.Cell>
+                        </Table.Row>
+                      ))}
+                      {groupedRolePermissions.button.length === 0 && (
+                        <Table.Row>
+                          <Table.Cell colSpan={4} textAlign="center">
+                            <Text color="gray.500">暂无按钮权限</Text>
+                          </Table.Cell>
+                        </Table.Row>
+                      )}
+                    </Table.Body>
+                  </Table.Root>
+                </Tabs.Content>
+                <Tabs.Content value="api" pt={4}>
+                  <Table.Root size="sm">
+                    <Table.Header>
+                      <Table.Row>
+                        <Table.ColumnHeader>权限名称</Table.ColumnHeader>
+                        <Table.ColumnHeader>资源</Table.ColumnHeader>
+                        <Table.ColumnHeader>操作</Table.ColumnHeader>
+                        <Table.ColumnHeader>描述</Table.ColumnHeader>
+                        <Table.ColumnHeader>操作</Table.ColumnHeader>
+                      </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                      {groupedRolePermissions.api.map((permission: any) => (
+                        <Table.Row key={permission.id}>
+                          <Table.Cell>
+                            <Badge colorScheme="purple" variant="solid">
+                              {permission.name}
+                            </Badge>
+                          </Table.Cell>
+                          <Table.Cell>
+                            <Badge colorScheme="orange" variant="outline">
+                              {permission.resource}
+                            </Badge>
+                          </Table.Cell>
+                          <Table.Cell>
+                            <Badge colorScheme="teal" variant="outline">
+                              {permission.action}
+                            </Badge>
+                          </Table.Cell>
+                          <Table.Cell>{permission.description || "无描述"}</Table.Cell>
+                          <Table.Cell>
+                            <Button
+                              size="sm"
+                              colorScheme="red"
+                              variant="outline"
+                              onClick={() => handleRemovePermission(permission)}
+                            >
+                              移除
+                            </Button>
+                          </Table.Cell>
+                        </Table.Row>
+                      ))}
+                      {groupedRolePermissions.api.length === 0 && (
+                        <Table.Row>
+                          <Table.Cell colSpan={5} textAlign="center">
+                            <Text color="gray.500">暂无API权限</Text>
+                          </Table.Cell>
+                        </Table.Row>
+                      )}
+                    </Table.Body>
+                  </Table.Root>
+                </Tabs.Content>
+              </Tabs.Root>
             )}
           </Flex>
         )}
       </Flex>
 
       {/* 分配权限对话框 */}
-      <Dialog.Root open={isAssignOpen} onOpenChange={(details) => setIsAssignOpen(details.open)}>
+      <Dialog.Root 
+        open={isAssignOpen && !!selectedRole} 
+        onOpenChange={(details) => setIsAssignOpen(details.open)}
+        size="4xl"
+        placement="center"
+        lazyMount
+        closeOnInteractOutside
+      >
         <Dialog.Content maxW="4xl" maxHeight="80vh">
+          <DialogCloseTrigger />
           <Dialog.Header>
             <Dialog.Title>为 {selectedRole?.name} 分配权限</Dialog.Title>
           </Dialog.Header>
           <Dialog.Body>
-            <div 
-              ref={scrollRef}
-              style={{ 
-                maxHeight: '60vh', 
-                overflowY: 'auto',
-                padding: '8px',
-                border: '1px solid #e2e8f0',
-                borderRadius: '6px',
-                backgroundColor: '#f8fafc',
-                outline: 'none'
-              }}
-              tabIndex={0}
-              onWheel={(e) => {
-                e.stopPropagation()
-                const element = e.currentTarget
-                element.scrollTop += e.deltaY
-              }}
-            >
-              <Table.Root size="sm">
-              <Table.Header>
-                <Table.Row>
-                  <Table.ColumnHeader>选择</Table.ColumnHeader>
-                  <Table.ColumnHeader>权限名称</Table.ColumnHeader>
-                  <Table.ColumnHeader>资源</Table.ColumnHeader>
-                  <Table.ColumnHeader>操作</Table.ColumnHeader>
-                  <Table.ColumnHeader>描述</Table.ColumnHeader>
-                </Table.Row>
-              </Table.Header>
-              <Table.Body>
-                {Array.isArray(permissions) && permissions.map((permission: any) => (
-                  <Table.Row key={permission.id}>
-                    <Table.Cell>
-                        <input
-                          type="checkbox"
-                          checked={isPermissionAssigned(permission.id)}
-                          onChange={() => {
-                            if (isPermissionAssigned(permission.id)) {
-                              handleRemovePermission(permission)
-                            } else {
-                              handleAssignPermission(permission)
-                            }
-                          }}
-                        />
-                    </Table.Cell>
-                    <Table.Cell>
-                      <Badge colorScheme="purple" variant="solid">
-                        {permission.name}
-                      </Badge>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <Badge colorScheme="orange" variant="outline">
-                        {permission.resource}
-                      </Badge>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <Badge colorScheme="teal" variant="outline">
-                        {permission.action}
-                      </Badge>
-                    </Table.Cell>
-                    <Table.Cell>{permission.description || "无描述"}</Table.Cell>
-                  </Table.Row>
-                ))}
-              </Table.Body>
-            </Table.Root>
-            </div>
+            {permissionsLoading ? (
+              <Text textAlign="center" py={8}>加载权限数据中...</Text>
+            ) : (
+            <Tabs.Root defaultValue="menu">
+              <Tabs.List>
+                <Tabs.Trigger value="menu">
+                  菜单权限 ({groupedPermissions.menu.length})
+                </Tabs.Trigger>
+                <Tabs.Trigger value="button">
+                  按钮权限 ({groupedPermissions.button.length})
+                </Tabs.Trigger>
+                <Tabs.Trigger value="api">
+                  API权限 ({groupedPermissions.api.length})
+                </Tabs.Trigger>
+              </Tabs.List>
+              <Tabs.Content value="menu" pt={4}>
+                <div 
+                  ref={scrollRef}
+                  style={{ 
+                    maxHeight: '50vh', 
+                    overflowY: 'auto',
+                    padding: '8px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '6px',
+                    backgroundColor: '#f8fafc',
+                    outline: 'none'
+                  }}
+                  tabIndex={0}
+                  onWheel={(e) => {
+                    e.stopPropagation()
+                    const element = e.currentTarget
+                    element.scrollTop += e.deltaY
+                  }}
+                >
+                  <Table.Root size="sm">
+                    <Table.Header>
+                      <Table.Row>
+                        <Table.ColumnHeader>选择</Table.ColumnHeader>
+                        <Table.ColumnHeader>权限名称</Table.ColumnHeader>
+                        <Table.ColumnHeader>菜单路径</Table.ColumnHeader>
+                        <Table.ColumnHeader>描述</Table.ColumnHeader>
+                      </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                      {groupedPermissions.menu.length === 0 ? (
+                        <Table.Row>
+                          <Table.Cell colSpan={4} textAlign="center">
+                            <Text color="gray.500" py={4}>
+                              暂无菜单权限，请在"权限管理"页面创建菜单权限
+                            </Text>
+                          </Table.Cell>
+                        </Table.Row>
+                      ) : (
+                        groupedPermissions.menu.map((permission: any) => (
+                          <Table.Row key={permission.id}>
+                            <Table.Cell>
+                              <input
+                                type="checkbox"
+                                checked={isPermissionAssigned(permission.id)}
+                                onChange={() => {
+                                  if (isPermissionAssigned(permission.id)) {
+                                    handleRemovePermission(permission)
+                                  } else {
+                                    handleAssignPermission(permission)
+                                  }
+                                }}
+                              />
+                            </Table.Cell>
+                            <Table.Cell>
+                              <Badge colorScheme="purple" variant="solid">
+                                {permission.name}
+                              </Badge>
+                            </Table.Cell>
+                            <Table.Cell>{permission.menu_path || "无路径"}</Table.Cell>
+                            <Table.Cell>{permission.description || "无描述"}</Table.Cell>
+                          </Table.Row>
+                        ))
+                      )}
+                    </Table.Body>
+                  </Table.Root>
+                </div>
+              </Tabs.Content>
+              <Tabs.Content value="button" pt={4}>
+                <div 
+                  style={{ 
+                    maxHeight: '50vh', 
+                    overflowY: 'auto',
+                    padding: '8px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '6px',
+                    backgroundColor: '#f8fafc',
+                    outline: 'none'
+                  }}
+                  tabIndex={0}
+                  onWheel={(e) => {
+                    e.stopPropagation()
+                    const element = e.currentTarget
+                    element.scrollTop += e.deltaY
+                  }}
+                >
+                  <Table.Root size="sm">
+                    <Table.Header>
+                      <Table.Row>
+                        <Table.ColumnHeader>选择</Table.ColumnHeader>
+                        <Table.ColumnHeader>权限名称</Table.ColumnHeader>
+                        <Table.ColumnHeader>按钮标识</Table.ColumnHeader>
+                        <Table.ColumnHeader>描述</Table.ColumnHeader>
+                      </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                      {groupedPermissions.button.map((permission: any) => (
+                        <Table.Row key={permission.id}>
+                          <Table.Cell>
+                            <input
+                              type="checkbox"
+                              checked={isPermissionAssigned(permission.id)}
+                              onChange={() => {
+                                if (isPermissionAssigned(permission.id)) {
+                                  handleRemovePermission(permission)
+                                } else {
+                                  handleAssignPermission(permission)
+                                }
+                              }}
+                            />
+                          </Table.Cell>
+                          <Table.Cell>
+                            <Badge colorScheme="purple" variant="solid">
+                              {permission.name}
+                            </Badge>
+                          </Table.Cell>
+                          <Table.Cell>{permission.button_id || "无标识"}</Table.Cell>
+                          <Table.Cell>{permission.description || "无描述"}</Table.Cell>
+                        </Table.Row>
+                      ))}
+                    </Table.Body>
+                  </Table.Root>
+                </div>
+              </Tabs.Content>
+              <Tabs.Content value="api" pt={4}>
+                <div 
+                  style={{ 
+                    maxHeight: '50vh', 
+                    overflowY: 'auto',
+                    padding: '8px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '6px',
+                    backgroundColor: '#f8fafc',
+                    outline: 'none'
+                  }}
+                  tabIndex={0}
+                  onWheel={(e) => {
+                    e.stopPropagation()
+                    const element = e.currentTarget
+                    element.scrollTop += e.deltaY
+                  }}
+                >
+                  <Table.Root size="sm">
+                    <Table.Header>
+                      <Table.Row>
+                        <Table.ColumnHeader>选择</Table.ColumnHeader>
+                        <Table.ColumnHeader>权限名称</Table.ColumnHeader>
+                        <Table.ColumnHeader>资源</Table.ColumnHeader>
+                        <Table.ColumnHeader>操作</Table.ColumnHeader>
+                        <Table.ColumnHeader>描述</Table.ColumnHeader>
+                      </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                      {groupedPermissions.api.map((permission: any) => (
+                        <Table.Row key={permission.id}>
+                          <Table.Cell>
+                            <input
+                              type="checkbox"
+                              checked={isPermissionAssigned(permission.id)}
+                              onChange={() => {
+                                if (isPermissionAssigned(permission.id)) {
+                                  handleRemovePermission(permission)
+                                } else {
+                                  handleAssignPermission(permission)
+                                }
+                              }}
+                            />
+                          </Table.Cell>
+                          <Table.Cell>
+                            <Badge colorScheme="purple" variant="solid">
+                              {permission.name}
+                            </Badge>
+                          </Table.Cell>
+                          <Table.Cell>
+                            <Badge colorScheme="orange" variant="outline">
+                              {permission.resource}
+                            </Badge>
+                          </Table.Cell>
+                          <Table.Cell>
+                            <Badge colorScheme="teal" variant="outline">
+                              {permission.action}
+                            </Badge>
+                          </Table.Cell>
+                          <Table.Cell>{permission.description || "无描述"}</Table.Cell>
+                        </Table.Row>
+                      ))}
+                    </Table.Body>
+                  </Table.Root>
+                </div>
+              </Tabs.Content>
+            </Tabs.Root>
+            )}
           </Dialog.Body>
           <Dialog.Footer>
             <Button onClick={() => setIsAssignOpen(false)}>

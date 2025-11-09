@@ -99,13 +99,18 @@ class RBACService:
         return True
 
     # 权限管理方法
-    def create_permission(self, name: str, resource: str, action: str, description: Optional[str] = None) -> Permission:
+    def create_permission(self, name: str, resource: str, action: str, description: Optional[str] = None,
+                         permission_type: str = "api", menu_path: Optional[str] = None, 
+                         button_id: Optional[str] = None) -> Permission:
         """创建权限"""
         permission = Permission(
             name=name,
             resource=resource,
             action=action,
-            description=description
+            description=description,
+            permission_type=permission_type,
+            menu_path=menu_path,
+            button_id=button_id
         )
         self.session.add(permission)
         self.session.commit()
@@ -164,7 +169,8 @@ class RBACService:
         return self.session.exec(statement).all()
 
     def update_permission(self, permission_id: str, name: str = None, resource: str = None, 
-                         action: str = None, description: str = None) -> Permission:
+                         action: str = None, description: str = None, permission_type: str = None,
+                         menu_path: str = None, button_id: str = None) -> Permission:
         """更新权限"""
         permission = self.session.get(Permission, permission_id)
         if not permission:
@@ -178,6 +184,12 @@ class RBACService:
             permission.action = action
         if description is not None:
             permission.description = description
+        if permission_type is not None:
+            permission.permission_type = permission_type
+        if menu_path is not None:
+            permission.menu_path = menu_path
+        if button_id is not None:
+            permission.button_id = button_id
         
         self.session.commit()
         self.session.refresh(permission)
