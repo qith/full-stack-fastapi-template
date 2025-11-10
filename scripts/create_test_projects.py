@@ -91,12 +91,12 @@ def main():
                 "background_info": "澳门地区的PoC试点项目"
             },
             {
-                "name": "非深非广交付项目F",
+                "name": "非深非莞交付项目F",
                 "project_type": "交付",
-                "location": "非深非广",
+                "location": "非深非莞",
                 "product": "产品F",
                 "contract_amount": 800000.0,
-                "background_info": "非深非广地区的交付项目"
+                "background_info": "非深非莞地区的交付项目"
             }
         ]
         

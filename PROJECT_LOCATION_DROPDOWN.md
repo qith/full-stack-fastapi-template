@@ -11,7 +11,7 @@
 1. **华北** - 蓝色标识 (primary)
 2. **华中** - 紫色标识 (secondary)  
 3. **华南** - 绿色标识 (success)
-4. **非深非广** - 橙色标识 (warning)
+4. **非深非莞** - 灰色标识 (default)
 5. **澳门** - 青色标识 (info)
 6. **香港** - 红色标识 (error)
 
@@ -56,14 +56,14 @@
 ### 常量定义
 ```typescript
 export const PROJECT_LOCATIONS = [
-  '华北', '华中', '华南', '非深非广', '澳门', '香港'
+  '华北', '华东', '华中', '华南', '西南', '西北', '非深非莞', '澳门', '香港', '海外'
 ] as const
 
 export const LOCATION_COLORS = {
   '华北': 'primary',
   '华中': 'secondary',
   '华南': 'success',
-  '非深非广': 'warning',
+  '非深非莞': 'default',
   '澳门': 'info',
   '香港': 'error',
 } as const

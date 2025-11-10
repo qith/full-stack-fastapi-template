@@ -126,6 +126,58 @@ def update_project(
     return project
 
 
+@router.post("/{project_id}/close")
+def close_project(
+    *,
+    session: SessionDep,
+    project_id: UUID,
+    current_user: CurrentUser,
+) -> Any:
+    """
+    关闭项目（将项目状态设置为"关闭"）
+    """
+    project_service = ProjectService(session)
+    project = project_service.get_project(project_id)
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    # 更新项目状态为"关闭"
+    from app.schemas_pm import ProjectUpdate
+    project_update = ProjectUpdate(status="关闭")
+    updated_project = project_service.update_project(project_id, project_update)
+    
+    if not updated_project:
+        raise HTTPException(status_code=500, detail="Failed to close project")
+    
+    return {"status": "success", "message": "项目已关闭", "project": updated_project}
+
+
+@router.post("/{project_id}/complete")
+def complete_project(
+    *,
+    session: SessionDep,
+    project_id: UUID,
+    current_user: CurrentUser,
+) -> Any:
+    """
+    完成项目（将项目状态设置为"完成"）
+    """
+    project_service = ProjectService(session)
+    project = project_service.get_project(project_id)
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    # 更新项目状态为"完成"
+    from app.schemas_pm import ProjectUpdate
+    project_update = ProjectUpdate(status="完成")
+    updated_project = project_service.update_project(project_id, project_update)
+    
+    if not updated_project:
+        raise HTTPException(status_code=500, detail="Failed to complete project")
+    
+    return {"status": "success", "message": "项目已完成", "project": updated_project}
+
+
 @router.delete("/{project_id}")
 def delete_project(
     *,

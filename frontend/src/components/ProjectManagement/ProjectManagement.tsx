@@ -25,11 +25,13 @@ import {
   Delete as DeleteIcon,
   Edit as EditIcon,
   Assignment as AssignmentIcon,
+  Close as CloseIcon,
+  CheckCircle as CheckCircleIcon,
 } from '@mui/icons-material'
 import { useQuery } from '@tanstack/react-query'
 
 import { ProjectsService } from '@/client'
-import { getLocationColor, getProjectTypeColor } from '@/constants/projectConstants'
+import { getLocationColor, getProjectTypeColor, getProjectStatusColor } from '@/constants/projectConstants'
 import ProjectStatisticsWithToggle from './ProjectStatisticsWithToggle'
 import ProjectList from './ProjectList'
 import ProjectForm from './ProjectForm'
@@ -132,6 +134,26 @@ const ProjectManagement: React.FC = () => {
       } finally {
         setIsDeleting(false)
       }
+    }
+  }
+
+  const handleCloseProject = async (projectId: string) => {
+    try {
+      await ProjectsService.closeProject({ projectId })
+      refetch()
+      refetchStatistics()
+    } catch (error) {
+      console.error('关闭项目失败:', error)
+    }
+  }
+
+  const handleCompleteProject = async (projectId: string) => {
+    try {
+      await ProjectsService.completeProject({ projectId })
+      refetch()
+      refetchStatistics()
+    } catch (error) {
+      console.error('完成项目失败:', error)
     }
   }
 
@@ -315,6 +337,12 @@ const ProjectManagement: React.FC = () => {
                       </Typography>
                       <Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0 }}>
                         <Chip 
+                          label={project.status || '正常'} 
+                          size="small"
+                          color={getProjectStatusColor(project.status || '正常') as any}
+                          variant="filled"
+                        />
+                        <Chip 
                           label={project.location} 
                           size="small"
                           color={getLocationColor(project.location) as any}
@@ -374,14 +402,34 @@ const ProjectManagement: React.FC = () => {
                       >
                         <AssignmentIcon />
                       </IconButton>
-                      <IconButton 
-                        size="small" 
-                        color="secondary"
-                        onClick={() => handleEditProject(project)}
-                        title="编辑项目"
-                      >
-                        <EditIcon />
-                      </IconButton>
+                      {(project.status === '正常' || !project.status) && (
+                        <>
+                          <IconButton 
+                            size="small" 
+                            color="secondary"
+                            onClick={() => handleEditProject(project)}
+                            title="编辑项目"
+                          >
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton 
+                            size="small" 
+                            color="warning"
+                            onClick={() => handleCloseProject(project.id)}
+                            title="关闭项目"
+                          >
+                            <CloseIcon />
+                          </IconButton>
+                          <IconButton 
+                            size="small" 
+                            color="success"
+                            onClick={() => handleCompleteProject(project.id)}
+                            title="完成项目"
+                          >
+                            <CheckCircleIcon />
+                          </IconButton>
+                        </>
+                      )}
                       <IconButton 
                         size="small" 
                         color="error"

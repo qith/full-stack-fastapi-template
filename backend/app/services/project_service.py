@@ -1,6 +1,6 @@
 from typing import List, Optional, Dict, Any
 from uuid import UUID
-from sqlmodel import Session, select, func
+from sqlmodel import Session, select, func, or_
 from datetime import datetime
 
 from app.models_pm import (
@@ -321,34 +321,44 @@ class ProjectService:
 
     # 统计功能
     def get_project_statistics(self) -> ProjectStatistics:
-        """获取项目统计信息"""
-        # 按区域统计
+        """获取项目统计信息（只统计非关闭项目）"""
+        # 按区域统计（排除关闭项目，只统计正常和完成状态的项目）
         location_stats = []
-        statement = select(Project.location, func.count(Project.id)).group_by(Project.location)
+        statement = select(Project.location, func.count(Project.id)).where(
+            or_(Project.status == '正常', Project.status == '完成', Project.status.is_(None))
+        ).group_by(Project.location)
         results = self.db.exec(statement).all()
         for location, count in results:
             location_stats.append(ProjectCountByLocation(location=location, count=count))
 
-        # 按产品统计 - 统计每个产品涉及的去重项目数
+        # 按产品统计 - 统计每个产品涉及的去重项目数（排除关闭项目）
         product_stats = []
-        # 使用 distinct 统计每个产品名称对应的不同项目数量
+        # 使用 distinct 统计每个产品名称对应的不同项目数量，需要join Project表来过滤状态
         statement = select(
             ProjectProduct.product_name, 
             func.count(func.distinct(ProjectProduct.project_id))
+        ).join(
+            Project, Project.id == ProjectProduct.project_id
+        ).where(
+            or_(Project.status == '正常', Project.status == '完成', Project.status.is_(None))
         ).group_by(ProjectProduct.product_name)
         results = self.db.exec(statement).all()
         for product_name, count in results:
             product_stats.append(ProjectCountByProduct(product=product_name, count=count))
 
-        # 按项目类型统计
+        # 按项目类型统计（排除关闭项目，只统计正常和完成状态的项目）
         type_stats = []
-        statement = select(Project.project_type, func.count(Project.id)).group_by(Project.project_type)
+        statement = select(Project.project_type, func.count(Project.id)).where(
+            or_(Project.status == '正常', Project.status == '完成', Project.status.is_(None))
+        ).group_by(Project.project_type)
         results = self.db.exec(statement).all()
         for project_type, count in results:
             type_stats.append(ProjectCountByType(project_type=project_type, count=count))
 
-        # 总项目数
-        statement = select(func.count(Project.id))
+        # 总项目数（排除关闭项目，只统计正常和完成状态的项目）
+        statement = select(func.count(Project.id)).where(
+            or_(Project.status == '正常', Project.status == '完成', Project.status.is_(None))
+        )
         total_projects = self.db.exec(statement).one()
 
         return ProjectStatistics(
@@ -360,14 +370,16 @@ class ProjectService:
         )
 
     def get_location_product_relationship(self) -> List[Dict[str, Any]]:
-        """获取区域-产品关联数据，用于桑基图"""
-        # 查询项目、区域和产品的关联数据
+        """获取区域-产品关联数据，用于桑基图（只统计非关闭项目）"""
+        # 查询项目、区域和产品的关联数据（排除关闭项目）
         statement = select(
             Project.location,
             ProjectProduct.product_name,
             func.count(ProjectProduct.id).label('count')
         ).join(
             ProjectProduct, Project.id == ProjectProduct.project_id
+        ).where(
+            or_(Project.status == '正常', Project.status == '完成', Project.status.is_(None))
         ).group_by(
             Project.location, ProjectProduct.product_name
         )
@@ -385,14 +397,16 @@ class ProjectService:
         return relationship_data
 
     def get_product_type_statistics(self) -> List[Dict[str, Any]]:
-        """获取按产品和项目类型的统计数据"""
-        # 查询项目、产品和项目类型的关联数据
+        """获取按产品和项目类型的统计数据（只统计非关闭项目）"""
+        # 查询项目、产品和项目类型的关联数据（排除关闭项目）
         statement = select(
             ProjectProduct.product_name,
             Project.project_type,
             func.count(func.distinct(ProjectProduct.project_id)).label('count')
         ).join(
             Project, Project.id == ProjectProduct.project_id
+        ).where(
+            or_(Project.status == '正常', Project.status == '完成', Project.status.is_(None))
         ).group_by(
             ProjectProduct.product_name, Project.project_type
         )

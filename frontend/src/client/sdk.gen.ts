@@ -385,6 +385,48 @@ export class ProjectsService {
     }
     
     /**
+     * Close Project
+     * 关闭项目
+     * @param data The data for the request.
+     * @param data.projectId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static closeProject(data: { projectId: string }): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/projects/{project_id}/close',
+            path: {
+                project_id: data.projectId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Complete Project
+     * 完成项目
+     * @param data The data for the request.
+     * @param data.projectId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static completeProject(data: { projectId: string }): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/projects/{project_id}/complete',
+            path: {
+                project_id: data.projectId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
      * Create Role Assignment
      * 添加角色分配
      * @param data The data for the request.

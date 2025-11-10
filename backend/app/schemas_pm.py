@@ -167,6 +167,7 @@ class ProjectBase(BaseModel):
     contract_amount: Optional[float] = None
     background: Optional[str] = None
     import_time: Optional[datetime] = None
+    status: Optional[str] = "正常"  # 项目状态：正常、关闭、完成
 
 
 class ProjectCreate(ProjectBase):
@@ -182,6 +183,7 @@ class ProjectUpdate(BaseModel):
     contract_amount: Optional[float] = None
     background: Optional[str] = None
     import_time: Optional[datetime] = None
+    status: Optional[str] = None  # 项目状态：正常、关闭、完成
     products: Optional[List[ProjectProductCreate]] = None
     role_assignments: Optional[List[RoleAssignmentCreate]] = None
     milestones: Optional[List[MilestoneCreate]] = None

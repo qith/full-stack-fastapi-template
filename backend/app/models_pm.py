@@ -22,6 +22,12 @@ class ProgressType(str, Enum):
     WEEKLY = "周进展"
 
 
+class ProjectStatus(str, Enum):
+    NORMAL = "正常"
+    CLOSED = "关闭"
+    COMPLETED = "完成"
+
+
 class ProductDict(SQLModel, table=True):
     """产品字典表"""
     __tablename__ = "product_dict"
@@ -102,6 +108,7 @@ class Project(SQLModel, table=True):
     contract_amount: Optional[float] = Field(default=None)  # 合同金额
     background: Optional[str] = Field(default=None)  # 项目背景信息
     import_time: Optional[datetime] = Field(default=None)  # 项目导入时间
+    status: str = Field(default="正常")  # 项目状态：正常、关闭、完成
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     

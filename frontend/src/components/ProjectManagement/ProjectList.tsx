@@ -29,9 +29,12 @@ import {
   Timeline as TimelineIcon,
   Assignment as AssignmentIcon,
   Clear as ClearIcon,
+  Close as CloseIcon,
+  CheckCircle as CheckCircleIcon,
 } from '@mui/icons-material'
 import { ProjectsService } from '@/client'
-import { getLocationColor, getProjectTypeColor } from '@/constants/projectConstants'
+import { getLocationColor, getProjectTypeColor, getProjectStatusColor } from '@/constants/projectConstants'
+import useCustomToast from '@/hooks/useCustomToast'
 
 import ProjectForm from './ProjectForm'
 import DeleteProjectDialog from './DeleteProjectDialog'
@@ -51,6 +54,8 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onProjectUpdated })
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [closingProjectId, setClosingProjectId] = useState<string | null>(null)
+  const toast = useCustomToast()
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value)
@@ -79,11 +84,38 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onProjectUpdated })
         setIsDeleteDialogOpen(false)
         setSelectedProject(null)
         onProjectUpdated()
-      } catch (error) {
+        toast.showSuccessToast('项目删除成功')
+      } catch (error: any) {
         console.error('删除项目失败:', error)
+        toast.showErrorToast(error?.body?.detail || '删除项目失败')
       } finally {
         setIsDeleting(false)
       }
+    }
+  }
+
+  const handleCloseProject = async (projectId: string) => {
+    setClosingProjectId(projectId)
+    try {
+      await ProjectsService.closeProject({ projectId })
+      onProjectUpdated()
+      toast.showSuccessToast('项目已关闭')
+    } catch (error: any) {
+      console.error('关闭项目失败:', error)
+      toast.showErrorToast(error?.body?.detail || '关闭项目失败')
+    } finally {
+      setClosingProjectId(null)
+    }
+  }
+
+  const handleCompleteProject = async (projectId: string) => {
+    try {
+      await ProjectsService.completeProject({ projectId })
+      onProjectUpdated()
+      toast.showSuccessToast('项目已完成')
+    } catch (error: any) {
+      console.error('完成项目失败:', error)
+      toast.showErrorToast(error?.body?.detail || '完成项目失败')
     }
   }
 
@@ -237,6 +269,12 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onProjectUpdated })
                     </Typography>
                     <Box sx={{ display: 'flex', gap: 1, ml: 2 }}>
                       <Chip 
+                        label={project.status || '正常'} 
+                        size="small"
+                        color={getProjectStatusColor(project.status || '正常') as any}
+                        variant="filled"
+                      />
+                      <Chip 
                         label={project.location} 
                         size="small"
                         color={getLocationColor(project.location) as any}
@@ -296,14 +334,35 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onProjectUpdated })
                     >
                       <AssignmentIcon />
                     </IconButton>
-                    <IconButton 
-                      size="small" 
-                      color="secondary"
-                      onClick={() => handleEditProject(project)}
-                      title="编辑项目"
-                    >
-                      <EditIcon />
-                    </IconButton>
+                    {(project.status === '正常' || !project.status) && (
+                      <>
+                        <IconButton 
+                          size="small" 
+                          color="secondary"
+                          onClick={() => handleEditProject(project)}
+                          title="编辑项目"
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton 
+                          size="small" 
+                          color="warning"
+                          onClick={() => handleCloseProject(project.id)}
+                          title="关闭项目"
+                          disabled={closingProjectId === project.id}
+                        >
+                          <CloseIcon />
+                        </IconButton>
+                        <IconButton 
+                          size="small" 
+                          color="success"
+                          onClick={() => handleCompleteProject(project.id)}
+                          title="完成项目"
+                        >
+                          <CheckCircleIcon />
+                        </IconButton>
+                      </>
+                    )}
                     <IconButton 
                       size="small" 
                       color="error"

@@ -8,7 +8,7 @@ export const PROJECT_LOCATIONS = [
   '华南',
   '西南',
   '西北',
-  '非深非广',
+  '非深非莞',
   '澳门',
   '香港',
   '海外'
@@ -22,7 +22,7 @@ export const LOCATION_COLORS = {
   '华南': 'info' as const,
   '西南': 'warning' as const,
   '西北': 'error' as const,
-  '非深非广': 'default' as const,
+  '非深非莞': 'default' as const,
   '澳门': 'inherit' as const,
   '香港': 'primary' as const,
   '海外': 'secondary' as const,
@@ -68,6 +68,20 @@ export const PROGRESS_TYPE_COLORS = {
   '周进展': 'secondary' as const,
 } as const
 
+// 项目状态选项
+export const PROJECT_STATUSES = [
+  '正常',
+  '关闭',
+  '完成'
+] as const
+
+// 项目状态颜色映射
+export const PROJECT_STATUS_COLORS = {
+  '正常': 'success' as const,
+  '关闭': 'error' as const,
+  '完成': 'info' as const,
+} as const
+
 // 获取属地颜色的辅助函数
 export const getLocationColor = (location: string) => {
   return LOCATION_COLORS[location as keyof typeof LOCATION_COLORS] || 'default'
@@ -86,4 +100,9 @@ export const getMilestoneStatusColor = (status: string) => {
 // 获取进展类型颜色的辅助函数
 export const getProgressTypeColor = (type: string) => {
   return PROGRESS_TYPE_COLORS[type as keyof typeof PROGRESS_TYPE_COLORS] || 'default'
+}
+
+// 获取项目状态颜色的辅助函数
+export const getProjectStatusColor = (status: string) => {
+  return PROJECT_STATUS_COLORS[status as keyof typeof PROJECT_STATUS_COLORS] || 'default'
 }
