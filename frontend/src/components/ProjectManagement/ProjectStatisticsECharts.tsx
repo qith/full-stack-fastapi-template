@@ -3,6 +3,7 @@ import { Grid, Paper, Typography, Box } from '@mui/material'
 import ReactECharts from 'echarts-for-react'
 import { useQuery } from '@tanstack/react-query'
 import { ProjectsService } from '@/client'
+import { getProjectTypeHexColor } from '@/constants/projectConstants'
 
 const ProjectStatisticsECharts: React.FC = () => {
   // 获取统计数据
@@ -133,7 +134,7 @@ const ProjectStatisticsECharts: React.FC = () => {
         data: statistics.by_type?.map(item => ({
           value: item.count,
           itemStyle: {
-            color: getProjectTypeColor(item.project_type)
+            color: getProjectTypeHexColor(item.project_type)
           }
         })) || [],
         label: {
@@ -301,7 +302,7 @@ const ProjectStatisticsECharts: React.FC = () => {
         stack: 'total',
         data: productTypeData?.map((item: any) => item['机会点'] || 0) || [],
         itemStyle: {
-          color: getProjectTypeColor('机会点')
+          color: getProjectTypeHexColor('机会点')
         },
         label: {
           show: true,
@@ -314,7 +315,7 @@ const ProjectStatisticsECharts: React.FC = () => {
         stack: 'total',
         data: productTypeData?.map((item: any) => item['交付'] || 0) || [],
         itemStyle: {
-          color: getProjectTypeColor('交付')
+          color: getProjectTypeHexColor('交付')
         },
         label: {
           show: true,
@@ -327,7 +328,7 @@ const ProjectStatisticsECharts: React.FC = () => {
         stack: 'total',
         data: productTypeData?.map((item: any) => item['PoC'] || 0) || [],
         itemStyle: {
-          color: getProjectTypeColor('PoC')
+          color: getProjectTypeHexColor('PoC')
         },
         label: {
           show: true,
@@ -446,15 +447,7 @@ function getRegionColor(region: string): string {
   return colors[region] || '#666666'
 }
 
-// 获取项目类型颜色
-function getProjectTypeColor(type: string): string {
-  const colors: { [key: string]: string } = {
-    '交付': '#1976d2',
-    'PoC': '#388e3c',
-    '机会点': '#f57c00'
-  }
-  return colors[type] || '#666666'
-}
+// 使用统一的颜色定义（已从 projectConstants 导入 getProjectTypeHexColor）
 
 // 生成桑基图节点数据
 function getSankeyNodes(data: Array<{ location: string; product: string; count: number }>): any[] {

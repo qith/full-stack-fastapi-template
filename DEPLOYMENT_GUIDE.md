@@ -218,3 +218,4 @@ SELECT 'permission', COUNT(*) FROM permission;
 2. 检查服务状态：`docker-compose ps`
 3. 参考详细文档：`scripts/data-sync-guide.md`
 
+

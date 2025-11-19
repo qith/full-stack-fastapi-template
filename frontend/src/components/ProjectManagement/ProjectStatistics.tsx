@@ -7,8 +7,9 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { ProjectsService } from '@/client'
 import SankeyChart from './SankeyChart'
+import { getProjectTypeHexColor } from '@/constants/projectConstants'
 
-// 导入自定义颜色
+// 导入自定义颜色（用于产品统计等非项目类型图表）
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d']
 
 interface ProjectStatisticsProps {
@@ -106,8 +107,11 @@ const ProjectStatistics: React.FC<ProjectStatisticsProps> = ({ statistics }) => 
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="value" name="项目数量" fill="#82ca9d">
+              <Bar dataKey="value" name="项目数量">
                 <LabelList dataKey="value" position="top" />
+                {typeData.map((entry: any, index: number) => (
+                  <Cell key={`cell-${index}`} fill={getProjectTypeHexColor(entry.name)} />
+                ))}
               </Bar>
             </BarChart>
           </ResponsiveContainer>

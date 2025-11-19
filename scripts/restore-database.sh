@@ -102,3 +102,4 @@ echo "2. 验证数据完整性:"
 echo "   docker-compose exec db psql -U $POSTGRES_USER -d $POSTGRES_DB -c '\\dt'"
 echo ""
 
+

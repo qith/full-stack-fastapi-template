@@ -39,3 +39,4 @@ def downgrade():
     op.drop_table('product_dict')
     # ### end Alembic commands ###
 
+
