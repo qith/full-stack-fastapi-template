@@ -1,0 +1,40 @@
+services:
+  backend:
+    ports:
+      - "8881:8000"
+    labels: []
+    networks:
+      - default
+    environment:
+      - FRONTEND_HOST=http://${PUBLIC_HOST}:8880
+      - BACKEND_CORS_ORIGINS=["http://${PUBLIC_HOST}:8880"]
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:8000/api/v1/utils/health-check/
+
+  frontend:
+    ports:
+      - "8880:80"
+    labels: []
+    networks:
+      - default
+    build:
+      context: ./frontend
+      args:
+        - VITE_API_URL=http://${PUBLIC_HOST}:8881
+        - NODE_ENV=production
+
+  adminer:
+    ports:
+      - "8882:8080"
+    labels: []
+    networks:
+      - default
+
+networks:
+  traefik-public:
+    external: false
+

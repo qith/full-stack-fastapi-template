@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
   Dialog,
   DialogTitle,
@@ -9,7 +9,6 @@ import {
   Box,
   Tabs,
   Tab,
-  Divider,
   Paper,
   Chip,
   IconButton,
@@ -41,12 +40,11 @@ import {
   Check as CheckIcon,
   Warning as WarningIcon,
   Schedule as ScheduleIcon,
-  Flag as FlagIcon,
 } from '@mui/icons-material'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ProjectsService } from '@/client'
 import useAuth from '@/hooks/useAuth'
-import { getLocationColor, getProjectTypeColor, getMilestoneStatusColor, getProgressTypeColor, MILESTONE_STATUSES, PROGRESS_TYPES } from '@/constants/projectConstants'
+import { getLocationColor, getProjectTypeColor, getMilestoneStatusColor, MILESTONE_STATUSES, PROGRESS_TYPES } from '@/constants/projectConstants'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -107,7 +105,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
   const { user } = useAuth()
 
   // 获取最新的项目数据
-  const { data: latestProject, isLoading: isProjectLoading } = useQuery({
+  const { data: latestProject } = useQuery({
     queryKey: ['project', project?.id],
     queryFn: () => project ? ProjectsService.readProject({ projectId: project.id }) : Promise.resolve(null),
     enabled: !!project && open, // 只有当项目存在且对话框打开时才查询
