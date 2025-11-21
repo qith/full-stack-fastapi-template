@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid, Paper, Typography, Box } from '@mui/material'
+import { Paper, Typography, Box } from '@mui/material'
 import ReactECharts from 'echarts-for-react'
 import { useQuery } from '@tanstack/react-query'
 import { ProjectsService } from '@/client'
@@ -12,13 +12,13 @@ const ProjectStatisticsECharts: React.FC = () => {
   })
 
   // 获取区域-产品关联数据
-  const { data: relationshipData, isLoading: isRelationshipLoading } = useQuery({
+  const { data: relationshipData } = useQuery({
     queryKey: ['location-product-relationship'],
     queryFn: () => ProjectsService.getLocationProductRelationship(),
   })
 
   // 获取产品-项目类型统计数据
-  const { data: productTypeData, isLoading: isProductTypeLoading } = useQuery({
+  const { data: productTypeData } = useQuery({
     queryKey: ['product-type-statistics'],
     queryFn: () => ProjectsService.getProductTypeStatistics(),
   })
@@ -464,7 +464,7 @@ function getSankeyNodes(data: Array<{ location: string; product: string; count: 
   const nodes: any[] = []
   
   // 添加区域节点
-  locations.forEach((location, index) => {
+  locations.forEach((location) => {
     nodes.push({
       name: location,
       itemStyle: {
@@ -474,7 +474,7 @@ function getSankeyNodes(data: Array<{ location: string; product: string; count: 
   })
   
   // 添加产品节点
-  products.forEach((product, index) => {
+  products.forEach((product) => {
     nodes.push({
       name: product,
       itemStyle: {

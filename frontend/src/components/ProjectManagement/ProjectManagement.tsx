@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
   Box,
   Container,
@@ -18,10 +18,7 @@ import {
 } from '@mui/material'
 import {
   Add as AddIcon,
-  BarChart as BarChartIcon,
   Timeline as TimelineIcon,
-  Business as BusinessIcon,
-  Category as CategoryIcon,
   Delete as DeleteIcon,
   Edit as EditIcon,
   Assignment as AssignmentIcon,
@@ -337,9 +334,9 @@ const ProjectManagement: React.FC = () => {
                       </Typography>
                       <Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0 }}>
                         <Chip 
-                          label={project.status || '正常'} 
+                          label={(project as any).status || '正常'} 
                           size="small"
-                          color={getProjectStatusColor(project.status || '正常') as any}
+                          color={getProjectStatusColor((project as any).status || '正常') as any}
                           variant="filled"
                         />
                         <Chip 
@@ -402,7 +399,7 @@ const ProjectManagement: React.FC = () => {
                       >
                         <AssignmentIcon />
                       </IconButton>
-                      {(project.status === '正常' || !project.status) && (
+                      {((project as any).status === '正常' || !(project as any).status) && (
                         <>
                           <IconButton 
                             size="small" 

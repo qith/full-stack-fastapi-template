@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import {
   Dialog,
   DialogTitle,
@@ -24,6 +24,7 @@ import {
   CircularProgress,
   GridLegacy as Grid,
 } from '@mui/material'
+import type { SelectChangeEvent } from '@mui/material/Select'
 import {
   Timeline,
   TimelineItem,
@@ -42,6 +43,7 @@ import {
   Schedule as ScheduleIcon,
 } from '@mui/icons-material'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import type { Milestone, Project, ProjectsReadProjectMilestonesResponse, ProjectsReadProjectProgressesResponse } from '@/client'
 import { ProjectsService } from '@/client'
 import useAuth from '@/hooks/useAuth'
 import { getLocationColor, getProjectTypeColor, getMilestoneStatusColor, MILESTONE_STATUSES, PROGRESS_TYPES } from '@/constants/projectConstants'
@@ -78,7 +80,7 @@ function a11yProps(index: number) {
 interface ProjectDetailProps {
   open: boolean
   onClose: () => void
-  project: any
+  project: Project | null
   onProjectUpdated: () => void
 }
 
@@ -105,33 +107,57 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
   const { user } = useAuth()
 
   // 获取最新的项目数据
-  const { data: latestProject } = useQuery({
+  const { data: latestProject } = useQuery<Project>({
     queryKey: ['project', project?.id],
-    queryFn: () => project ? ProjectsService.readProject({ projectId: project.id }) : Promise.resolve(null),
+    queryFn: async () => {
+      if (!project) {
+        throw new Error('Project not found')
+      }
+      return ProjectsService.readProject({ projectId: project.id })
+    },
     enabled: !!project && open, // 只有当项目存在且对话框打开时才查询
   })
 
-  // 使用最新的项目数据，如果没有则使用传入的project
-  const currentProject = latestProject || project
+  const currentProject: Project | null = useMemo(
+    () => latestProject ?? project ?? null,
+    [latestProject, project],
+  )
 
   // 获取项目里程碑
-  const { data: apiMilestones, isLoading: isMilestonesLoading, error: milestonesError } = useQuery({
+  const {
+    data: apiMilestones = [],
+    isLoading: isMilestonesLoading,
+    error: milestonesError,
+  } = useQuery<ProjectsReadProjectMilestonesResponse>({
     queryKey: ['project-milestones', currentProject?.id],
-    queryFn: () => currentProject ? ProjectsService.readProjectMilestones({ projectId: currentProject.id }) : Promise.resolve([]),
+    queryFn: async () => {
+      if (!currentProject) {
+        return []
+      }
+      return ProjectsService.readProjectMilestones({ projectId: currentProject.id })
+    },
     enabled: !!currentProject, // 总是调用API获取最新的里程碑数据
   })
 
-  // 使用API返回的里程碑数据
-  const milestones = apiMilestones || []
-  const isMilestonesLoadingFinal = isMilestonesLoading
+  const milestones: Milestone[] = apiMilestones
 
 
   // 获取项目进展
-  const { data: progresses, isLoading: isProgressesLoading } = useQuery({
+  const {
+    data: progressesData,
+    isLoading: isProgressesLoading,
+  } = useQuery<ProjectsReadProjectProgressesResponse>({
     queryKey: ['project-progresses', currentProject?.id],
-    queryFn: () => currentProject ? ProjectsService.readProjectProgresses({ projectId: currentProject.id }) : Promise.resolve([]),
+    queryFn: async () => {
+      if (!currentProject) {
+        return [] as any
+      }
+      return ProjectsService.readProjectProgresses({ projectId: currentProject.id })
+    },
     enabled: !!currentProject,
   })
+  
+  const progresses: any[] = Array.isArray(progressesData) ? progressesData : []
 
   // 添加里程碑
   const addMilestoneMutation = useMutation({
@@ -160,7 +186,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
   // 编辑里程碑
   const editMilestoneMutation = useMutation({
     mutationFn: (data: any) => ProjectsService.updateMilestone({
-      projectId: currentProject.id,
+      projectId: currentProject!.id,
       milestoneId: editingMilestone.id,
       requestBody: data.requestBody
     }),
@@ -184,7 +210,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
   // 删除里程碑
   const deleteMilestoneMutation = useMutation({
     mutationFn: (milestoneId: string) => ProjectsService.deleteMilestone({
-      projectId: currentProject.id,
+      projectId: currentProject!.id,
       milestoneId: milestoneId
     }),
     onSuccess: () => {
@@ -205,7 +231,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
   // 添加进展
   const addProgressMutation = useMutation({
     mutationFn: (data: any) => ProjectsService.createProgress({
-      projectId: currentProject.id,
+      projectId: currentProject!.id,
       requestBody: {
         tracking_user_id: user?.id || '3fad6319-9471-4a50-8bbd-d39672ed4b9e', // 使用当前登录用户ID
         ...data,
@@ -225,7 +251,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
   // 编辑进展
   const editProgressMutation = useMutation({
     mutationFn: (data: any) => ProjectsService.updateProgress({
-      projectId: currentProject.id,
+      projectId: currentProject!.id,
       progressId: editingProgress?.id,
       requestBody: data
     }),
@@ -239,7 +265,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
   // 删除进展
   const deleteProgressMutation = useMutation({
     mutationFn: (progressId: string) => ProjectsService.deleteProgress({
-      projectId: currentProject.id,
+      projectId: currentProject!.id,
       progressId: progressId
     }),
     onSuccess: () => {
@@ -272,12 +298,6 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
   const handleAddProgress = () => {
     setIsAddProgressDialogOpen(true)
   }
-
-  const handleAddRoleMember = () => {
-    // TODO: 实现添加角色成员功能
-    alert('添加角色成员功能正在开发中...')
-  }
-
   const handleEditProgress = (progress: any) => {
     setEditingProgress(progress)
     setIsEditProgressDialogOpen(true)
@@ -289,26 +309,40 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
     }
   }
 
-  const handleMilestoneChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
-    const { name, value } = e.target
-    setNewMilestone({
-      ...newMilestone,
-      [name as string]: value,
-    })
+  const handleMilestoneInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target
+    setNewMilestone((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
   }
 
-  const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
-    const { name, value } = e.target
-    setNewProgress({
-      ...newProgress,
-      [name as string]: value,
-    })
+  const handleMilestoneStatusChange = (event: SelectChangeEvent<string>) => {
+    setNewMilestone((prev) => ({
+      ...prev,
+      status: event.target.value,
+    }))
+  }
+
+  const handleProgressInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target
+    setNewProgress((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
+
+  const handleProgressTypeChange = (event: SelectChangeEvent<string>) => {
+    setNewProgress((prev) => ({
+      ...prev,
+      progress_type: event.target.value,
+    }))
   }
 
   const handleSubmitMilestone = (e: React.FormEvent) => {
     e.preventDefault()
     addMilestoneMutation.mutate({
-      projectId: currentProject.id,
+      projectId: currentProject!.id,
       requestBody: {
         milestone_date: new Date(newMilestone.milestone_date).toISOString(),
         description: newMilestone.description,
@@ -360,11 +394,12 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
     }
   }
 
-  if (!project) {
+  if (!project || !currentProject) {
     return null
   }
 
   return (
+    <>
     <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
       <DialogTitle>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -546,7 +581,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
             </Button>
           </Box>
 
-          {isMilestonesLoadingFinal ? (
+          {isMilestonesLoading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
               <CircularProgress />
             </Box>
@@ -706,6 +741,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
       <DialogActions>
         <Button onClick={onClose}>关闭</Button>
       </DialogActions>
+    </Dialog>
 
       {/* 添加里程碑对话框 */}
       <Dialog open={isAddMilestoneDialogOpen} onClose={() => setIsAddMilestoneDialogOpen(false)}>
@@ -721,8 +757,8 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
                   fullWidth
                   required
                   InputLabelProps={{ shrink: true }}
-                  value={newMilestone.milestone_date}
-                  onChange={handleMilestoneChange}
+                    value={newMilestone.milestone_date}
+                    onChange={handleMilestoneInputChange}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -732,7 +768,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
                   fullWidth
                   required
                   value={newMilestone.description}
-                  onChange={handleMilestoneChange}
+                  onChange={handleMilestoneInputChange}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -743,7 +779,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
                     name="status"
                     value={newMilestone.status}
                     label="状态"
-                    onChange={handleMilestoneChange}
+                    onChange={handleMilestoneStatusChange}
                   >
                     {MILESTONE_STATUSES.map((status) => (
                       <MenuItem key={status} value={status}>{status}</MenuItem>
@@ -788,10 +824,10 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
                   required
                   InputLabelProps={{ shrink: true }}
                   value={editingMilestone?.milestone_date || ''}
-                  onChange={(e) => setEditingMilestone({
-                    ...editingMilestone,
-                    milestone_date: e.target.value
-                  })}
+                  onChange={(event) => setEditingMilestone((prev: any) => ({
+                    ...prev,
+                    milestone_date: event.target.value,
+                  }))}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -801,10 +837,10 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
                   fullWidth
                   required
                   value={editingMilestone?.description || ''}
-                  onChange={(e) => setEditingMilestone({
-                    ...editingMilestone,
-                    description: e.target.value
-                  })}
+                  onChange={(event) => setEditingMilestone((prev: any) => ({
+                    ...prev,
+                    description: event.target.value,
+                  }))}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -815,10 +851,10 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
                     name="status"
                     value={editingMilestone?.status || '正常'}
                     label="状态"
-                    onChange={(e) => setEditingMilestone({
-                      ...editingMilestone,
-                      status: e.target.value
-                    })}
+                    onChange={(event: SelectChangeEvent<string>) => setEditingMilestone((prev: any) => ({
+                      ...prev,
+                      status: event.target.value,
+                    }))}
                   >
                     {MILESTONE_STATUSES.map((status) => (
                       <MenuItem key={status} value={status}>{status}</MenuItem>
@@ -841,7 +877,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
           {editMilestoneMutation.error && (
             <Box sx={{ p: 2, bgcolor: 'error.light', color: 'error.contrastText' }}>
               <Typography variant="body2">
-                编辑失败: {editMilestoneMutation.error.message}
+                编辑失败: {(editMilestoneMutation.error as Error).message}
               </Typography>
             </Box>
           )}
@@ -862,7 +898,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
                     name="progress_type"
                     value={newProgress.progress_type}
                     label="进展类型"
-                    onChange={handleProgressChange}
+                    onChange={handleProgressTypeChange}
                   >
                     {PROGRESS_TYPES.map((type) => (
                       <MenuItem key={type} value={type}>{type}</MenuItem>
@@ -879,7 +915,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
                   required
                   InputLabelProps={{ shrink: true }}
                   value={newProgress.progress_date}
-                  onChange={handleProgressChange}
+                  onChange={handleProgressInputChange}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -891,7 +927,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
                   multiline
                   rows={4}
                   value={newProgress.description}
-                  onChange={handleProgressChange}
+                  onChange={handleProgressInputChange}
                 />
               </Grid>
             </Grid>
@@ -923,10 +959,10 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
                     name="progress_type"
                     value={editingProgress?.progress_type || ''}
                     label="进展类型"
-                    onChange={(e) => setEditingProgress({
-                      ...editingProgress,
-                      progress_type: e.target.value
-                    })}
+                    onChange={(event: SelectChangeEvent<string>) => setEditingProgress((prev: any) => ({
+                      ...prev,
+                      progress_type: event.target.value,
+                    }))}
                   >
                     {PROGRESS_TYPES.map((type) => (
                       <MenuItem key={type} value={type}>{type}</MenuItem>
@@ -943,10 +979,10 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
                   required
                   InputLabelProps={{ shrink: true }}
                   value={editingProgress?.progress_date ? new Date(editingProgress.progress_date).toISOString().split('T')[0] : ''}
-                  onChange={(e) => setEditingProgress({
-                    ...editingProgress,
-                    progress_date: e.target.value
-                  })}
+                  onChange={(event) => setEditingProgress((prev: any) => ({
+                    ...prev,
+                    progress_date: event.target.value,
+                  }))}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -958,10 +994,10 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
                   multiline
                   rows={4}
                   value={editingProgress?.description || ''}
-                  onChange={(e) => setEditingProgress({
-                    ...editingProgress,
-                    description: e.target.value
-                  })}
+                  onChange={(event) => setEditingProgress((prev: any) => ({
+                    ...prev,
+                    description: event.target.value,
+                  }))}
                 />
               </Grid>
             </Grid>
@@ -978,7 +1014,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ open, onClose, project, o
           </DialogActions>
         </form>
       </Dialog>
-    </Dialog>
+    </>
   )
 }
 

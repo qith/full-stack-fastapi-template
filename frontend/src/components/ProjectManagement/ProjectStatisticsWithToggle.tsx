@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
+import { Box, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import { BarChart, PieChart } from '@mui/icons-material'
 import ProjectStatistics from './ProjectStatistics'
 import ProjectStatisticsECharts from './ProjectStatisticsECharts'

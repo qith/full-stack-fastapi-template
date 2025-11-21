@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Paper, Typography, GridLegacy as Grid } from '@mui/material'
+import { Box, Paper, Typography } from '@mui/material'
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList,
   PieChart, Pie, Cell
@@ -17,7 +17,7 @@ interface ProjectStatisticsProps {
 
 const ProjectStatistics: React.FC<ProjectStatisticsProps> = ({ statistics }) => {
   // 获取区域-产品关联数据
-  const { data: relationshipData, isLoading: isRelationshipLoading } = useQuery({
+  const { data: relationshipData } = useQuery({
     queryKey: ['location-product-relationship'],
     queryFn: () => ProjectsService.getLocationProductRelationship(),
   })
@@ -40,7 +40,7 @@ const ProjectStatistics: React.FC<ProjectStatisticsProps> = ({ statistics }) => 
   const productData = statistics.by_product?.map((item: any) => ({
     name: item.product || '',
     value: item.count || 0,
-  })).filter(item => item.name && item.value > 0) || []
+  })).filter((item: any) => item.name && item.value > 0) || []
 
   // 准备按项目类型统计数据
   const typeData = statistics.by_type?.map((item: any) => ({
@@ -127,7 +127,7 @@ const ProjectStatistics: React.FC<ProjectStatisticsProps> = ({ statistics }) => 
                 cx="50%"
                 cy="50%"
                 labelLine={true}
-                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                label={({ name, percent }: any) => `${name}: ${((percent as number) * 100).toFixed(0)}%`}
                 outerRadius={80}
                 fill="#8884d8"
                 dataKey="value"

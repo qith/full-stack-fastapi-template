@@ -5,9 +5,11 @@ services:
     labels: []
     networks:
       - default
+    env_file:
+      - .env
     environment:
-      - FRONTEND_HOST=http://${PUBLIC_HOST}:8880
-      - BACKEND_CORS_ORIGINS=["http://${PUBLIC_HOST}:8880"]
+      - FRONTEND_HOST=http://${PUBLIC_HOST:-localhost}:8880
+      - BACKEND_CORS_ORIGINS=["http://${PUBLIC_HOST:-localhost}:8880"]
     healthcheck:
       test:
         - CMD
@@ -21,10 +23,12 @@ services:
     labels: []
     networks:
       - default
+    env_file:
+      - .env
     build:
       context: ./frontend
       args:
-        - VITE_API_URL=http://${PUBLIC_HOST}:8881
+        - VITE_API_URL=http://${PUBLIC_HOST:-localhost}:8881
         - NODE_ENV=production
 
   adminer:
