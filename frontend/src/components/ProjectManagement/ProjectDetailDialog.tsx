@@ -22,6 +22,7 @@ import {
   Category as CategoryIcon,
 } from '@mui/icons-material'
 import MilestoneTimeline from './MilestoneTimeline'
+import { getProjectTypeColor } from '@/constants/projectConstants'
 
 interface ProjectDetailDialogProps {
   open: boolean
@@ -74,18 +75,7 @@ const ProjectDetailDialog: React.FC<ProjectDetailDialogProps> = ({
     })
   }
 
-  const getProjectTypeColor = (type: string): "success" | "error" | "primary" | "warning" => {
-    switch (type) {
-      case '交付':
-        return 'success'
-      case 'PoC':
-        return 'warning'
-      case '机会点':
-        return 'primary'
-      default:
-        return 'primary'
-    }
-  }
+  // 使用统一的颜色定义（已从 projectConstants 导入 getProjectTypeColor）
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>

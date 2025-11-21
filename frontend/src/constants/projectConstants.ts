@@ -35,11 +35,18 @@ export const PROJECT_TYPES = [
   '机会点'
 ] as const
 
-// 项目类型颜色映射
+// 项目类型颜色映射（Material-UI 颜色名称，用于 Chip 等组件）
 export const PROJECT_TYPE_COLORS = {
   '交付': 'success' as const,
   'PoC': 'primary' as const,
   '机会点': 'warning' as const,
+} as const
+
+// 项目类型十六进制颜色值（用于图表等需要具体颜色值的场景）
+export const PROJECT_TYPE_HEX_COLORS = {
+  '交付': '#2e7d32',      // success 绿色
+  'PoC': '#1976d2',       // primary 蓝色
+  '机会点': '#ed6c02',    // warning 橙色
 } as const
 
 // 里程碑状态选项
@@ -87,9 +94,14 @@ export const getLocationColor = (location: string) => {
   return LOCATION_COLORS[location as keyof typeof LOCATION_COLORS] || 'default'
 }
 
-// 获取项目类型颜色的辅助函数
+// 获取项目类型颜色的辅助函数（返回 Material-UI 颜色名称）
 export const getProjectTypeColor = (type: string) => {
   return PROJECT_TYPE_COLORS[type as keyof typeof PROJECT_TYPE_COLORS] || 'default'
+}
+
+// 获取项目类型十六进制颜色的辅助函数（用于图表等）
+export const getProjectTypeHexColor = (type: string) => {
+  return PROJECT_TYPE_HEX_COLORS[type as keyof typeof PROJECT_TYPE_HEX_COLORS] || '#666666'
 }
 
 // 获取里程碑状态颜色的辅助函数

@@ -233,7 +233,7 @@ const ProjectManagement: React.FC = () => {
                     display: 'flex',
                     flexDirection: 'column',
                     height: 140,
-                    bgcolor: 'primary.light',
+                    bgcolor: 'grey.700',
                     color: 'white',
                   }}
                 >
@@ -271,7 +271,7 @@ const ProjectManagement: React.FC = () => {
                     display: 'flex',
                     flexDirection: 'column',
                     height: 140,
-                    bgcolor: 'warning.light',
+                    bgcolor: 'primary.light',
                     color: 'white',
                   }}
                 >
@@ -290,7 +290,7 @@ const ProjectManagement: React.FC = () => {
                     display: 'flex',
                     flexDirection: 'column',
                     height: 140,
-                    bgcolor: 'info.light',
+                    bgcolor: 'warning.light',
                     color: 'white',
                   }}
                 >
